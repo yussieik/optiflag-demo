@@ -9,6 +9,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/styles.css">
     <script>
+    // Make navigateToResults globally accessible
+    function navigateToResults() {
+        document.getElementById('intro-container').classList.add('fade-out');
+        setTimeout(() => {
+            window.location.href = 'main.html';
+        }, 500);
+    }
+    
     // Optimization simulation logic
     window.onload = function() {
         const experiments = [{ticker: 'TSLA',name: 'bayes_iter_49',score: 54.55,winRate: 54.5,rank: 1},{ticker: 'TSLA',name: 'bayes_iter_50',score: 54.55,winRate: 54.5,rank: 2},{ticker: 'TSLA',name: 'bayes_iter_33',score: 45.83,winRate: 45.8,rank: 3},{ticker: 'TSLA',name: 'bayes_iter_40',score: 45.83,winRate: 45.8,rank: 4},{ticker: 'TSLA',name: 'bayes_iter_45',score: 45.83,winRate: 45.8,rank: 5}];
@@ -126,13 +134,6 @@
             setTimeout(() => {
                 buttonContainer.style.opacity = '1';
             }, 50);
-        }
-        
-        function navigateToResults() {
-            document.getElementById('intro-container').classList.add('fade-out');
-            setTimeout(() => {
-                window.location.href = 'main.html';
-            }, 500);
         }
         
         function showExperiment(experiment) {
