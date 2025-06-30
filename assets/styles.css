@@ -376,7 +376,7 @@ tr:hover {
 /* Ensure experiment details have proper stacking context */
 .experiment-details {
     position: relative;
-    z-index: 1;
+    /* Removed z-index to prevent stacking context issues */
 }
 
 .experiment-info span {
@@ -505,7 +505,7 @@ tr:hover {
 .metric-card[data-tooltip]::before {
     content: attr(data-tooltip);
     position: fixed;
-    z-index: 2147483647; /* Maximum z-index value */
+    z-index: 999999; /* Very high but not maximum to avoid browser issues */
     bottom: auto;
     top: 50%;
     left: 50%;
@@ -578,7 +578,7 @@ tr:hover {
     background: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(3px);
     -webkit-backdrop-filter: blur(3px);
-    z-index: 2147483646; /* One less than tooltip */
+    z-index: 999998; /* One less than tooltip */
     opacity: 1;
     visibility: visible;
     pointer-events: none;
@@ -657,14 +657,14 @@ tr:hover {
 .metrics-grid {
     position: relative;
     overflow: visible;
-    z-index: 1;
     padding: var(--space-sm) 0;
+    /* Removed z-index to prevent stacking context issues */
 }
 
 /* Ensure metric cards have proper stacking context */
 .metric-card {
     position: relative;
-    z-index: 1;
+    /* Only add z-index on hover to bring card forward */
 }
 
 .metric-card:hover {
@@ -676,7 +676,7 @@ tr:hover {
 .section {
     overflow: visible !important;
     position: relative;
-    z-index: 1;
+    /* Removed z-index to prevent stacking context issues */
 }
 
 /* Container overflow handling */
@@ -1155,7 +1155,7 @@ tr:hover {
 .code-window-container {
     position: relative;
     margin: var(--space-xl) 0;
-    z-index: 1;
+    /* Removed z-index to prevent stacking context issues */
 }
 
 .code-window {
@@ -1341,7 +1341,7 @@ tr:hover {
     border: none;
     margin: 0;
     position: relative;
-    z-index: 1;
+    /* Removed z-index to prevent stacking context issues */
 }
 
 .parameters-header {
@@ -1390,7 +1390,7 @@ tr:hover {
     margin-top: 15px;
     animation: slideDown 0.2s ease-out;
     position: relative;
-    z-index: 1;
+    /* Removed z-index to prevent stacking context issues */
 }
 
 @keyframes slideDown {
