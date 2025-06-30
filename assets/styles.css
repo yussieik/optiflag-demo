@@ -498,21 +498,18 @@ tr:hover {
 
 .metric-card[data-tooltip]::before {
     content: attr(data-tooltip);
-    position: fixed;
+    position: absolute;
     z-index: 99999;
-    bottom: auto;
-    top: auto;
+    bottom: calc(100% + 20px);
     left: 50%;
     transform: translateX(-50%);
-    width: max-content;
-    min-width: 340px;
-    max-width: min(90vw, 800px);
-    padding: calc(var(--space-xl) * 1.25) calc(var(--space-xl) * 1.5);
+    width: 380px;
+    padding: 20px 24px;
     background: linear-gradient(135deg, #0B1426 0%, #1E293B 100%);
     color: #F8FAFC;
     font-size: 0.875rem;
     font-weight: 500;
-    line-height: 1.65;
+    line-height: 1.6;
     text-align: left;
     text-transform: none;
     letter-spacing: normal;
@@ -522,9 +519,8 @@ tr:hover {
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.3s ease, visibility 0.3s ease;
-    white-space: normal;
-    word-break: normal;
-    word-wrap: break-word;
+    white-space: pre-wrap;
+    word-break: break-word;
     font-family: var(--font-primary);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
@@ -537,35 +533,32 @@ tr:hover {
 .metric-card[data-tooltip]:hover::before {
     opacity: 1;
     visibility: visible;
-    bottom: calc(100% + 20px);
-    /* Viewport-aware positioning */
-    --tooltip-offset-x: max(-45vw, min(0px, calc(50vw - var(--mouse-x, 50vw) - 200px)));
-    left: calc(50% + var(--tooltip-offset-x, 0px));
 }
 
-/* Prevent tooltip from going off-screen horizontally */
-@media (min-width: 769px) {
-    .metric-card[data-tooltip]:hover::before {
-        left: 50%;
-        transform: translateX(-50%);
-        /* Keep tooltip on screen */
-        max-width: calc(100vw - 40px);
-    }
-    
-    /* For cards on the right side */
-    .metrics-grid > .metric-card:nth-child(3n)[data-tooltip]:hover::before,
-    .metrics-grid > .metric-card:nth-child(4n)[data-tooltip]:hover::before,
-    .metrics-grid > .metric-card:nth-child(5n)[data-tooltip]:hover::before {
-        left: auto;
-        right: 0;
-        transform: translateX(0);
-    }
-    
-    /* For cards on the left side */
-    .metrics-grid > .metric-card:nth-child(5n+1)[data-tooltip]:hover::before {
-        left: 0;
-        transform: translateX(0);
-    }
+/* Adjust tooltip position based on card position in grid */
+.metrics-grid {
+    position: relative;
+}
+
+/* For cards in the rightmost column - position tooltip to the left */
+.metrics-grid > .metric-card:nth-child(5n)[data-tooltip]::before,
+.metrics-grid > .metric-card:nth-child(5n-1)[data-tooltip]::before {
+    left: auto;
+    right: 0;
+    transform: translateX(0);
+}
+
+/* For cards in the leftmost column - position tooltip to the right */
+.metrics-grid > .metric-card:nth-child(5n+1)[data-tooltip]::before {
+    left: 0;
+    transform: translateX(0);
+}
+
+/* Center column cards keep centered tooltips */
+.metrics-grid > .metric-card:nth-child(5n+2)[data-tooltip]::before,
+.metrics-grid > .metric-card:nth-child(5n+3)[data-tooltip]::before {
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 
@@ -610,16 +603,14 @@ tr:hover {
     .metric-card[data-tooltip]::before {
         position: fixed;
         bottom: auto;
-        top: 10vh;
-        left: 5vw;
-        right: 5vw;
-        transform: none;
-        width: auto;
-        max-width: 90vw;
-        min-width: unset;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 90vw;
+        max-width: 400px;
         z-index: 99999;
         font-size: 0.9rem;
-        padding: var(--space-xl);
+        padding: 20px;
         max-height: 70vh;
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
@@ -627,9 +618,6 @@ tr:hover {
     
     .metric-card[data-tooltip]:hover::before {
         bottom: auto;
-        top: 10vh;
-        left: 5vw;
-        right: 5vw;
     }
     
     .metric-card[data-tooltip]::after {
@@ -1399,21 +1387,21 @@ tr:hover {
     position: relative;
     overflow: visible !important;
     min-height: 700px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: var(--space-xl) auto;
-    max-width: 100%;
+    display: block;
+    margin: var(--space-xl) 0;
+    width: 100%;
     z-index: 1;
     padding: 0;
 }
 
-/* Chart library container gets styled by chart_layout.py - avoid conflicts */
-#chart > div:first-child {
-    overflow: visible !important;
-    margin: 0 auto;
-    width: 100%;
-    max-width: 100%;
+/* Chart library container - ensure proper centering */
+#chart > div {
+    position: relative !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
 }
 
 /* Override TradingView default styles for dark theme */
