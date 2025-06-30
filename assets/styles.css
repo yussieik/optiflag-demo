@@ -1517,35 +1517,45 @@ tr:hover {
 }
 
 .info-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: var(--space-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
 }
 
 .info-row {
-    display: flex;
+    display: grid;
+    grid-template-columns: 140px 80px 1fr;
     align-items: center;
-    gap: var(--space-md);
+    gap: var(--space-sm);
     font-family: var(--font-mono);
+    padding: 4px 0;
 }
 
 .info-row.separator {
     margin-top: var(--space-lg);
     padding-top: var(--space-lg);
     border-top: 1px solid var(--border-secondary);
+    grid-template-columns: 140px 120px auto;
 }
 
 .info-label {
     color: var(--text-secondary);
     font-size: 13px;
     font-weight: 500;
-    min-width: 120px;
 }
 
 .info-value {
     color: var(--text-primary);
     font-size: 14px;
     font-weight: 600;
+    text-align: center;
+}
+
+.info-price {
+    color: var(--profit-secondary);
+    font-size: 14px;
+    font-weight: 600;
+    font-family: var(--font-mono);
 }
 
 .price-entry {
@@ -1563,7 +1573,8 @@ tr:hover {
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    margin-left: auto;
+    justify-self: start;
+    margin-left: var(--space-md);
 }
 
 .signal-buy {
@@ -1582,6 +1593,11 @@ tr:hover {
     background: var(--bg-secondary);
     color: var(--text-secondary);
     border: 1px solid var(--border-secondary);
+}
+
+/* Special case for exit row without signal type */
+.info-row:last-child {
+    grid-template-columns: 140px 120px 1fr;
 }
 
 /* Professional Trading Responsive Design */
