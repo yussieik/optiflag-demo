@@ -1692,65 +1692,57 @@ tr:hover {
     z-index: 100;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 12px;
 }
 
 .experiment-nav .nav-link {
     position: relative;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     width: 40px;
     height: 40px;
-    background: rgba(30, 41, 59, 0.8);
+    padding: 0 12px;
+    background: rgba(30, 41, 59, 0.9);
     border: 1px solid rgba(100, 116, 139, 0.3);
-    border-radius: 50%;
+    border-radius: 20px;
     color: var(--text-secondary);
     text-decoration: none;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 .experiment-nav .nav-link:hover {
+    width: auto;
     background: rgba(0, 212, 163, 0.15);
     border-color: var(--accent-primary);
     color: var(--accent-primary);
-    transform: scale(1.1);
+    padding-right: 20px;
 }
 
 .experiment-nav .nav-link svg {
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
+    min-width: 16px;
     stroke-width: 2;
-    transition: inherit;
+    transition: all 0.3s ease;
 }
 
-/* Tooltip for nav links */
-.experiment-nav .nav-link::before {
-    content: attr(data-label);
-    position: absolute;
-    right: 50px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(30, 41, 59, 0.95);
-    color: var(--text-primary);
-    padding: 6px 12px;
-    border-radius: 6px;
+.experiment-nav .nav-link .nav-text {
     font-size: 0.75rem;
-    font-weight: 500;
-    white-space: nowrap;
+    font-weight: 600;
+    margin-left: 8px;
     opacity: 0;
-    visibility: hidden;
-    transition: all 0.2s ease;
-    pointer-events: none;
-    border: 1px solid rgba(100, 116, 139, 0.3);
+    transform: translateX(-10px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.experiment-nav .nav-link:hover::before {
+.experiment-nav .nav-link:hover .nav-text {
     opacity: 1;
-    visibility: visible;
-    right: 55px;
+    transform: translateX(0);
 }
 
 /* Active state */
@@ -1760,9 +1752,25 @@ tr:hover {
     color: var(--accent-primary);
 }
 
+.experiment-nav .nav-link.active svg {
+    stroke: var(--accent-primary);
+}
+
 /* Remove inner wrapper as we don't need it */
 .experiment-nav-inner {
     display: contents;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .experiment-nav {
+        right: 10px;
+    }
+    
+    .experiment-nav .nav-link {
+        width: 36px;
+        height: 36px;
+    }
 }
 
 /* Scroll Arrow - Animated Down Arrow */
