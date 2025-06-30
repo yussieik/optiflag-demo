@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flagpole - TSLA - cut-TSLA, 2020-02-10</title>
+    <link rel="stylesheet" href="../assets/styles.css">
+    <script src="https://unpkg.com/lightweight-charts@4.1.0/dist/lightweight-charts.standalone.production.js"></script>
+</head>
+<body>
+    <div class="container">
+        <nav class="breadcrumb">
+            <a href="../index.html">Home</a> /
+            <a href="../experiments/TSLA_bayes_iter_30.html">
+                TSLA - bayes_iter_30
+            </a> /
+            <span>Flagpole Details</span>
+        </nav>
+
+        
+        <nav class="flagpole-navigation">
+            <div class="nav-container">
+                <a href="TSLA_bayes_iter_30_cut-TSLA__2020-02-06_0.html" class="nav-btn prev-btn">← Previous</a>
+                <span class="nav-info">
+                    Flagpole 248 of 580
+                </span>
+                <a href="TSLA_bayes_iter_30_cut-TSLA__2020-02-13_0.html" class="nav-btn next-btn">Next →</a>
+            </div>
+            <div class="nav-experiment-link">
+                <a href="../experiments/TSLA_bayes_iter_30.html" class="nav-btn experiment-btn">
+                    ← Back to TSLA - bayes_iter_30
+                </a>
+            </div>
+        </nav>
+        
+
+        <header>
+            <h1>Flagpole Analysis</h1>
+            <div class="flagpole-header-info">
+                <span class="ticker">TSLA</span>
+                <span class="timestamp">cut-TSLA, 2020-02-10</span>
+            </div>
+        </header>
+
+        <div class="flagpole-content">
+            <div class="section">
+                <h2>Price Chart</h2>
+                <div id="chart" style="height: 660px; background: white; border: 1px solid #e1e1e1; padding: 10px; box-sizing: border-box; overflow: visible;"></div>
+            </div>
+            
+            
+<script>
+// Chart initialization for flagpole visualization
+(function() {
+    'use strict';
+    
+    // Configuration
+    const chartOptions = {"height": 640, "layout": {"backgroundColor": "white", "textColor": "#191919", "fontSize": 12, "fontFamily": "'Trebuchet MS', Roboto, Ubuntu, sans-serif"}, "grid": {"vertLines": {"color": "#f0f0f0", "style": 0, "visible": true}, "horzLines": {"color": "#f0f0f0", "style": 0, "visible": true}}, "timeScale": {"visible": true, "borderVisible": true, "borderColor": "#2B2B43", "timeVisible": true, "secondsVisible": false, "tickMarkColor": "#2B2B43", "rightBarStaysOnScroll": true, "fixLeftEdge": false, "fixRightEdge": false, "ticksVisible": true, "minBarSpacing": 0.5, "barSpacing": 6, "height": 40}, "rightPriceScale": {"visible": true, "borderVisible": true, "borderColor": "#2B2B43", "ticksVisible": true, "scaleMargins": {"top": 0.1, "bottom": 0.2}}, "crosshair": {"mode": 0, "vertLine": {"visible": true, "labelVisible": true}, "horzLine": {"visible": true, "labelVisible": true}}, "localization": {"locale": "en-US", "dateFormat": "yyyy-MM-dd"}};
+    const candlestickData = [{"time": "2020-02-10 17:02:00", "open": 51.2933, "high": 51.3373, "low": 51.2448, "close": 51.2703, "volume": 563970.0}, {"time": "2020-02-10 17:03:00", "open": 51.3067, "high": 51.3333, "low": 51.2213, "close": 51.2447, "volume": 366450.0}, {"time": "2020-02-10 17:04:00", "open": 51.2287, "high": 51.2287, "low": 51.042, "close": 51.0744, "volume": 709545.0}, {"time": "2020-02-10 17:05:00", "open": 51.078, "high": 51.1613, "low": 50.9333, "close": 51.0247, "volume": 875895.0}, {"time": "2020-02-10 17:06:00", "open": 51.0347, "high": 51.066, "low": 50.9333, "close": 50.9844, "volume": 325965.0}, {"time": "2020-02-10 17:07:00", "open": 50.9628, "high": 51.0, "low": 50.9067, "close": 50.9353, "volume": 383685.0}, {"time": "2020-02-10 17:08:00", "open": 50.9656, "high": 51.1193, "low": 50.9305, "close": 50.984, "volume": 635490.0}, {"time": "2020-02-10 17:09:00", "open": 51.028, "high": 51.0493, "low": 50.9333, "close": 50.9447, "volume": 366570.0}, {"time": "2020-02-10 17:10:00", "open": 50.9453, "high": 51.0, "low": 50.9087, "close": 50.976, "volume": 328965.0}, {"time": "2020-02-10 17:11:00", "open": 50.988, "high": 51.0, "low": 50.8333, "close": 50.9236, "volume": 530055.0}, {"time": "2020-02-10 17:12:00", "open": 50.9333, "high": 50.9447, "low": 50.8667, "close": 50.9327, "volume": 288945.0}, {"time": "2020-02-10 17:13:00", "open": 50.9047, "high": 50.9048, "low": 50.624, "close": 50.6713, "volume": 1403205.0}, {"time": "2020-02-10 17:14:00", "open": 50.7126, "high": 50.8027, "low": 50.6841, "close": 50.7067, "volume": 522210.0}, {"time": "2020-02-10 17:15:00", "open": 50.7576, "high": 50.8093, "low": 50.69, "close": 50.7951, "volume": 239685.0}, {"time": "2020-02-10 17:16:00", "open": 50.804, "high": 50.866, "low": 50.7753, "close": 50.8653, "volume": 308400.0}, {"time": "2020-02-10 17:17:00", "open": 50.8473, "high": 50.848, "low": 50.7, "close": 50.7667, "volume": 669495.0}, {"time": "2020-02-10 17:18:00", "open": 50.75, "high": 50.7657, "low": 50.6007, "close": 50.6339, "volume": 454905.0}, {"time": "2020-02-10 17:19:00", "open": 50.6353, "high": 50.712, "low": 50.6029, "close": 50.695, "volume": 259965.0}, {"time": "2020-02-10 17:20:00", "open": 50.6943, "high": 50.8, "low": 50.6883, "close": 50.7067, "volume": 267090.0}, {"time": "2020-02-10 17:21:00", "open": 50.733, "high": 50.7433, "low": 50.6247, "close": 50.6415, "volume": 203760.0}, {"time": "2020-02-10 17:22:00", "open": 50.6247, "high": 50.666, "low": 50.5284, "close": 50.5833, "volume": 541695.0}, {"time": "2020-02-10 17:23:00", "open": 50.6045, "high": 50.658, "low": 50.5128, "close": 50.533, "volume": 412170.0}, {"time": "2020-02-10 17:24:00", "open": 50.547, "high": 50.5487, "low": 50.4327, "close": 50.4647, "volume": 594225.0}, {"time": "2020-02-10 17:25:00", "open": 50.4453, "high": 50.4833, "low": 50.3727, "close": 50.468, "volume": 824775.0}, {"time": "2020-02-10 17:26:00", "open": 50.4642, "high": 50.4893, "low": 50.4107, "close": 50.4207, "volume": 426735.0}, {"time": "2020-02-10 17:27:00", "open": 50.4013, "high": 50.4467, "low": 50.392, "close": 50.4243, "volume": 611490.0}, {"time": "2020-02-10 17:28:00", "open": 50.406, "high": 50.456, "low": 50.372, "close": 50.3915, "volume": 465180.0}, {"time": "2020-02-10 17:29:00", "open": 50.3955, "high": 50.3955, "low": 50.2867, "close": 50.2927, "volume": 728685.0}, {"time": "2020-02-10 17:30:00", "open": 50.28, "high": 50.4, "low": 50.2608, "close": 50.323, "volume": 599940.0}, {"time": "2020-02-10 17:31:00", "open": 50.33, "high": 50.4327, "low": 50.3005, "close": 50.388, "volume": 537540.0}, {"time": "2020-02-10 17:32:00", "open": 50.414, "high": 50.4387, "low": 50.3447, "close": 50.3793, "volume": 345390.0}, {"time": "2020-02-10 17:33:00", "open": 50.388, "high": 50.5667, "low": 50.3834, "close": 50.55, "volume": 997965.0}, {"time": "2020-02-10 17:34:00", "open": 50.5541, "high": 50.566, "low": 50.4748, "close": 50.5333, "volume": 451710.0}, {"time": "2020-02-10 17:35:00", "open": 50.5077, "high": 50.646, "low": 50.4887, "close": 50.6353, "volume": 933285.0}, {"time": "2020-02-10 17:36:00", "open": 50.6098, "high": 50.774, "low": 50.6083, "close": 50.7329, "volume": 728460.0}, {"time": "2020-02-10 17:37:00", "open": 50.7296, "high": 50.7661, "low": 50.6433, "close": 50.6433, "volume": 498795.0}, {"time": "2020-02-10 17:38:00", "open": 50.675, "high": 50.682, "low": 50.6, "close": 50.6115, "volume": 273990.0}, {"time": "2020-02-10 17:39:00", "open": 50.6455, "high": 50.766, "low": 50.6207, "close": 50.7368, "volume": 563040.0}, {"time": "2020-02-10 17:40:00", "open": 50.756, "high": 50.954, "low": 50.7487, "close": 50.9032, "volume": 1163130.0}, {"time": "2020-02-10 17:41:00", "open": 50.8911, "high": 50.9533, "low": 50.8193, "close": 50.9301, "volume": 537930.0}, {"time": "2020-02-10 17:42:00", "open": 50.9003, "high": 50.9667, "low": 50.8193, "close": 50.8667, "volume": 529380.0}, {"time": "2020-02-10 17:43:00", "open": 50.8407, "high": 50.854, "low": 50.6807, "close": 50.7571, "volume": 451980.0}, {"time": "2020-02-10 17:44:00", "open": 50.768, "high": 50.7993, "low": 50.6667, "close": 50.7481, "volume": 397350.0}, {"time": "2020-02-10 17:45:00", "open": 50.7421, "high": 50.7421, "low": 50.5653, "close": 50.5893, "volume": 449820.0}, {"time": "2020-02-10 17:46:00", "open": 50.5993, "high": 50.6248, "low": 50.534, "close": 50.5573, "volume": 365430.0}, {"time": "2020-02-10 17:47:00", "open": 50.5509, "high": 50.7333, "low": 50.5509, "close": 50.7029, "volume": 913905.0}, {"time": "2020-02-10 17:48:00", "open": 50.7206, "high": 50.7613, "low": 50.6747, "close": 50.7383, "volume": 433890.0}, {"time": "2020-02-10 17:49:00", "open": 50.744, "high": 50.744, "low": 50.6013, "close": 50.6811, "volume": 365115.0}, {"time": "2020-02-10 17:50:00", "open": 50.69, "high": 50.7193, "low": 50.5653, "close": 50.5962, "volume": 203250.0}, {"time": "2020-02-10 17:51:00", "open": 50.6024, "high": 50.6807, "low": 50.58, "close": 50.6569, "volume": 273015.0}, {"time": "2020-02-10 17:52:00", "open": 50.6667, "high": 50.7667, "low": 50.64, "close": 50.7542, "volume": 278970.0}, {"time": "2020-02-10 17:53:00", "open": 50.7667, "high": 50.7993, "low": 50.69, "close": 50.7167, "volume": 347970.0}, {"time": "2020-02-10 17:54:00", "open": 50.6833, "high": 50.7547, "low": 50.6625, "close": 50.716, "volume": 212265.0}, {"time": "2020-02-10 17:55:00", "open": 50.7333, "high": 50.7535, "low": 50.6787, "close": 50.6949, "volume": 158340.0}, {"time": "2020-02-10 17:56:00", "open": 50.704, "high": 50.7046, "low": 50.5836, "close": 50.6217, "volume": 393630.0}, {"time": "2020-02-10 17:57:00", "open": 50.5853, "high": 50.6993, "low": 50.5853, "close": 50.6582, "volume": 211950.0}, {"time": "2020-02-10 17:58:00", "open": 50.6707, "high": 50.686, "low": 50.6227, "close": 50.648, "volume": 180570.0}, {"time": "2020-02-10 17:59:00", "open": 50.6707, "high": 50.6833, "low": 50.5813, "close": 50.6, "volume": 263355.0}, {"time": "2020-02-10 18:00:00", "open": 50.6405, "high": 50.698, "low": 50.6016, "close": 50.6016, "volume": 295845.0}, {"time": "2020-02-10 18:01:00", "open": 50.634, "high": 50.6496, "low": 50.584, "close": 50.6, "volume": 209415.0}, {"time": "2020-02-10 18:02:00", "open": 50.6003, "high": 50.6114, "low": 50.4, "close": 50.5, "volume": 800760.0}, {"time": "2020-02-10 18:03:00", "open": 50.542, "high": 50.5433, "low": 50.4333, "close": 50.5172, "volume": 368130.0}, {"time": "2020-02-10 18:04:00", "open": 50.5187, "high": 50.6573, "low": 50.5027, "close": 50.63, "volume": 425175.0}, {"time": "2020-02-10 18:05:00", "open": 50.662, "high": 50.6846, "low": 50.6007, "close": 50.625, "volume": 291150.0}, {"time": "2020-02-10 18:06:00", "open": 50.6, "high": 50.65, "low": 50.5133, "close": 50.5333, "volume": 448395.0}, {"time": "2020-02-10 18:07:00", "open": 50.5513, "high": 50.5951, "low": 50.5007, "close": 50.5333, "volume": 155415.0}, {"time": "2020-02-10 18:08:00", "open": 50.5173, "high": 50.5784, "low": 50.5007, "close": 50.5493, "volume": 116325.0}, {"time": "2020-02-10 18:09:00", "open": 50.5527, "high": 50.568, "low": 50.482, "close": 50.5613, "volume": 222750.0}, {"time": "2020-02-10 18:10:00", "open": 50.565, "high": 50.6134, "low": 50.5007, "close": 50.51, "volume": 206925.0}, {"time": "2020-02-10 18:11:00", "open": 50.4899, "high": 50.55, "low": 50.4133, "close": 50.506, "volume": 550965.0}, {"time": "2020-02-10 18:12:00", "open": 50.5033, "high": 50.524, "low": 50.482, "close": 50.508, "volume": 115905.0}, {"time": "2020-02-10 18:13:00", "open": 50.5087, "high": 50.6, "low": 50.5007, "close": 50.5933, "volume": 333885.0}, {"time": "2020-02-10 18:14:00", "open": 50.5993, "high": 50.6667, "low": 50.5713, "close": 50.628, "volume": 411075.0}, {"time": "2020-02-10 18:15:00", "open": 50.6347, "high": 50.6867, "low": 50.5907, "close": 50.6867, "volume": 245835.0}, {"time": "2020-02-10 18:16:00", "open": 50.6901, "high": 50.7267, "low": 50.6196, "close": 50.6813, "volume": 440310.0}, {"time": "2020-02-10 18:17:00", "open": 50.6972, "high": 50.7034, "low": 50.5695, "close": 50.644, "volume": 218235.0}, {"time": "2020-02-10 18:18:00", "open": 50.6667, "high": 50.7057, "low": 50.6233, "close": 50.67, "volume": 165270.0}, {"time": "2020-02-10 18:19:00", "open": 50.6708, "high": 50.6733, "low": 50.587, "close": 50.6278, "volume": 257985.0}, {"time": "2020-02-10 18:20:00", "open": 50.6165, "high": 50.7253, "low": 50.5957, "close": 50.6953, "volume": 196350.0}, {"time": "2020-02-10 18:21:00", "open": 50.7073, "high": 50.9167, "low": 50.7073, "close": 50.8504, "volume": 939375.0}, {"time": "2020-02-10 18:22:00", "open": 50.8469, "high": 50.9387, "low": 50.8469, "close": 50.8867, "volume": 657825.0}, {"time": "2020-02-10 18:23:00", "open": 50.8998, "high": 50.8998, "low": 50.8014, "close": 50.8559, "volume": 415035.0}, {"time": "2020-02-10 18:24:00", "open": 50.8663, "high": 50.9084, "low": 50.794, "close": 50.8956, "volume": 402705.0}, {"time": "2020-02-10 18:25:00", "open": 50.9127, "high": 50.9127, "low": 50.8333, "close": 50.8767, "volume": 261270.0}, {"time": "2020-02-10 18:26:00", "open": 50.8729, "high": 51.096, "low": 50.87, "close": 51.0687, "volume": 1214265.0}, {"time": "2020-02-10 18:27:00", "open": 51.0933, "high": 51.1133, "low": 51.002, "close": 51.004, "volume": 490665.0}, {"time": "2020-02-10 18:28:00", "open": 51.0189, "high": 51.0327, "low": 50.9433, "close": 51.0, "volume": 356805.0}, {"time": "2020-02-10 18:29:00", "open": 51.0145, "high": 51.0145, "low": 50.866, "close": 50.9508, "volume": 272880.0}, {"time": "2020-02-10 18:30:00", "open": 50.9693, "high": 51.0335, "low": 50.9267, "close": 50.9843, "volume": 264645.0}, {"time": "2020-02-10 18:31:00", "open": 50.9897, "high": 51.0977, "low": 50.964, "close": 51.0796, "volume": 438015.0}, {"time": "2020-02-10 18:32:00", "open": 51.0833, "high": 51.1829, "low": 51.024, "close": 51.0892, "volume": 795915.0}, {"time": "2020-02-10 18:33:00", "open": 51.0689, "high": 51.1167, "low": 50.9267, "close": 50.976, "volume": 610770.0}, {"time": "2020-02-10 18:34:00", "open": 50.9766, "high": 50.9839, "low": 50.8667, "close": 50.9785, "volume": 342555.0}, {"time": "2020-02-10 18:35:00", "open": 50.9901, "high": 50.9901, "low": 50.9333, "close": 50.9685, "volume": 169800.0}, {"time": "2020-02-10 18:36:00", "open": 50.978, "high": 51.0727, "low": 50.978, "close": 51.045, "volume": 398745.0}, {"time": "2020-02-10 18:37:00", "open": 51.0454, "high": 51.0667, "low": 50.9693, "close": 51.0447, "volume": 301995.0}, {"time": "2020-02-10 18:38:00", "open": 50.9667, "high": 51.0118, "low": 50.9007, "close": 50.9678, "volume": 249225.0}, {"time": "2020-02-10 18:39:00", "open": 50.9783, "high": 51.0112, "low": 50.9213, "close": 50.9627, "volume": 167115.0}, {"time": "2020-02-10 18:40:00", "open": 50.9667, "high": 50.9667, "low": 50.8133, "close": 50.8133, "volume": 467010.0}, {"time": "2020-02-10 18:41:00", "open": 50.8296, "high": 50.9853, "low": 50.8296, "close": 50.9227, "volume": 307725.0}, {"time": "2020-02-10 18:42:00", "open": 50.8726, "high": 50.9693, "low": 50.8667, "close": 50.9448, "volume": 166815.0}, {"time": "2020-02-10 18:43:00", "open": 50.9484, "high": 50.96, "low": 50.8972, "close": 50.9486, "volume": 61185.0}, {"time": "2020-02-10 18:44:00", "open": 50.9284, "high": 50.9284, "low": 50.8747, "close": 50.9044, "volume": 99405.0}, {"time": "2020-02-10 18:45:00", "open": 50.908, "high": 50.908, "low": 50.6667, "close": 50.6667, "volume": 494580.0}, {"time": "2020-02-10 18:46:00", "open": 50.672, "high": 50.8536, "low": 50.672, "close": 50.8361, "volume": 413475.0}, {"time": "2020-02-10 18:47:00", "open": 50.8447, "high": 50.9042, "low": 50.8193, "close": 50.839, "volume": 266745.0}, {"time": "2020-02-10 18:48:00", "open": 50.8467, "high": 50.98, "low": 50.8236, "close": 50.9397, "volume": 335790.0}, {"time": "2020-02-10 18:49:00", "open": 50.9293, "high": 50.9327, "low": 50.8907, "close": 50.9086, "volume": 110790.0}, {"time": "2020-02-10 18:50:00", "open": 50.9137, "high": 51.04, "low": 50.9137, "close": 51.012, "volume": 434475.0}, {"time": "2020-02-10 18:51:00", "open": 51.0167, "high": 51.0494, "low": 50.9053, "close": 51.0287, "volume": 303075.0}, {"time": "2020-02-10 18:52:00", "open": 51.0277, "high": 51.0487, "low": 50.997, "close": 51.0163, "volume": 264780.0}, {"time": "2020-02-10 18:53:00", "open": 50.9997, "high": 51.02, "low": 50.9613, "close": 50.9721, "volume": 96270.0}, {"time": "2020-02-10 18:54:00", "open": 50.9664, "high": 50.9741, "low": 50.8773, "close": 50.8937, "volume": 205545.0}, {"time": "2020-02-10 18:55:00", "open": 50.8903, "high": 50.8987, "low": 50.8153, "close": 50.8455, "volume": 242595.0}, {"time": "2020-02-10 18:56:00", "open": 50.8473, "high": 50.9267, "low": 50.8153, "close": 50.8961, "volume": 309690.0}, {"time": "2020-02-10 18:57:00", "open": 50.9072, "high": 50.9633, "low": 50.8951, "close": 50.947, "volume": 230055.0}, {"time": "2020-02-10 18:58:00", "open": 50.9333, "high": 50.9334, "low": 50.8507, "close": 50.9, "volume": 143175.0}, {"time": "2020-02-10 18:59:00", "open": 50.9083, "high": 50.9571, "low": 50.8987, "close": 50.9223, "volume": 130725.0}, {"time": "2020-02-10 19:00:00", "open": 50.9297, "high": 51.0433, "low": 50.9297, "close": 51.0033, "volume": 414480.0}, {"time": "2020-02-10 19:01:00", "open": 51.0, "high": 51.0167, "low": 50.952, "close": 50.9743, "volume": 176820.0}, {"time": "2020-02-10 19:02:00", "open": 50.942, "high": 51.0333, "low": 50.9173, "close": 51.0099, "volume": 345390.0}, {"time": "2020-02-10 19:03:00", "open": 51.0387, "high": 51.0833, "low": 51.0117, "close": 51.0289, "volume": 470850.0}, {"time": "2020-02-10 19:04:00", "open": 51.0503, "high": 51.1833, "low": 51.0387, "close": 51.1493, "volume": 779655.0}, {"time": "2020-02-10 19:05:00", "open": 51.1517, "high": 51.2873, "low": 51.1333, "close": 51.263, "volume": 869925.0}, {"time": "2020-02-10 19:06:00", "open": 51.2636, "high": 51.4667, "low": 51.2567, "close": 51.4, "volume": 1677390.0}, {"time": "2020-02-10 19:07:00", "open": 51.38, "high": 51.4321, "low": 51.2667, "close": 51.2788, "volume": 978615.0}, {"time": "2020-02-10 19:08:00", "open": 51.3093, "high": 51.3151, "low": 51.1307, "close": 51.2707, "volume": 739035.0}, {"time": "2020-02-10 19:09:00", "open": 51.2521, "high": 51.2767, "low": 51.1211, "close": 51.2313, "volume": 354000.0}, {"time": "2020-02-10 19:10:00", "open": 51.2298, "high": 51.234, "low": 51.1033, "close": 51.1909, "volume": 314325.0}, {"time": "2020-02-10 19:11:00", "open": 51.2122, "high": 51.24, "low": 51.1673, "close": 51.2153, "volume": 230865.0}, {"time": "2020-02-10 19:12:00", "open": 51.2147, "high": 51.28, "low": 51.1737, "close": 51.256, "volume": 343410.0}, {"time": "2020-02-10 19:13:00", "open": 51.28, "high": 51.3873, "low": 51.232, "close": 51.3559, "volume": 821145.0}, {"time": "2020-02-10 19:14:00", "open": 51.3543, "high": 51.3746, "low": 51.1873, "close": 51.2307, "volume": 597690.0}, {"time": "2020-02-10 19:15:00", "open": 51.208, "high": 51.2967, "low": 51.2067, "close": 51.2617, "volume": 303945.0}, {"time": "2020-02-10 19:16:00", "open": 51.2437, "high": 51.36, "low": 51.2437, "close": 51.3593, "volume": 413010.0}, {"time": "2020-02-10 19:17:00", "open": 51.352, "high": 51.4493, "low": 51.3247, "close": 51.4393, "volume": 704460.0}, {"time": "2020-02-10 19:18:00", "open": 51.4236, "high": 51.6227, "low": 51.4236, "close": 51.6073, "volume": 1686255.0}, {"time": "2020-02-10 19:19:00", "open": 51.6073, "high": 51.6293, "low": 51.4333, "close": 51.526, "volume": 904620.0}, {"time": "2020-02-10 19:20:00", "open": 51.5117, "high": 51.579, "low": 51.4593, "close": 51.5485, "volume": 548940.0}, {"time": "2020-02-10 19:21:00", "open": 51.5607, "high": 51.7073, "low": 51.5333, "close": 51.6673, "volume": 1375665.0}, {"time": "2020-02-10 19:22:00", "open": 51.7, "high": 51.8147, "low": 51.6, "close": 51.7611, "volume": 1261875.0}, {"time": "2020-02-10 19:23:00", "open": 51.7387, "high": 51.7765, "low": 51.538, "close": 51.6662, "volume": 1074135.0}, {"time": "2020-02-10 19:24:00", "open": 51.6903, "high": 51.83, "low": 51.6787, "close": 51.7437, "volume": 962175.0}, {"time": "2020-02-10 19:25:00", "open": 51.7463, "high": 51.7672, "low": 51.5467, "close": 51.6182, "volume": 753645.0}, {"time": "2020-02-10 19:26:00", "open": 51.642, "high": 51.654, "low": 51.5373, "close": 51.6033, "volume": 509685.0}, {"time": "2020-02-10 19:27:00", "open": 51.6337, "high": 51.7233, "low": 51.5877, "close": 51.7189, "volume": 372420.0}, {"time": "2020-02-10 19:28:00", "open": 51.73, "high": 51.8513, "low": 51.7033, "close": 51.7957, "volume": 1034730.0}, {"time": "2020-02-10 19:29:00", "open": 51.8013, "high": 51.9253, "low": 51.749, "close": 51.8603, "volume": 1013010.0}, {"time": "2020-02-10 19:30:00", "open": 51.8408, "high": 51.8788, "low": 51.6737, "close": 51.6913, "volume": 732105.0}, {"time": "2020-02-10 19:31:00", "open": 51.6953, "high": 51.8157, "low": 51.6387, "close": 51.7885, "volume": 551775.0}, {"time": "2020-02-10 19:32:00", "open": 51.7836, "high": 51.7836, "low": 51.58, "close": 51.58, "volume": 496800.0}, {"time": "2020-02-10 19:33:00", "open": 51.58, "high": 51.7433, "low": 51.58, "close": 51.6673, "volume": 393705.0}, {"time": "2020-02-10 19:34:00", "open": 51.6993, "high": 51.7068, "low": 51.4813, "close": 51.6, "volume": 720735.0}, {"time": "2020-02-10 19:35:00", "open": 51.6253, "high": 51.6392, "low": 51.4933, "close": 51.5021, "volume": 302385.0}, {"time": "2020-02-10 19:36:00", "open": 51.505, "high": 51.6, "low": 51.408, "close": 51.4455, "volume": 879270.0}, {"time": "2020-02-10 19:37:00", "open": 51.4357, "high": 51.4667, "low": 51.252, "close": 51.3227, "volume": 1048875.0}, {"time": "2020-02-10 19:38:00", "open": 51.2877, "high": 51.4255, "low": 51.2605, "close": 51.32, "volume": 648945.0}, {"time": "2020-02-10 19:39:00", "open": 51.334, "high": 51.412, "low": 51.3, "close": 51.3936, "volume": 449085.0}, {"time": "2020-02-10 19:40:00", "open": 51.3817, "high": 51.5093, "low": 51.3557, "close": 51.4697, "volume": 655620.0}, {"time": "2020-02-10 19:41:00", "open": 51.471, "high": 51.5967, "low": 51.4265, "close": 51.5795, "volume": 529770.0}, {"time": "2020-02-10 19:42:00", "open": 51.5859, "high": 51.6327, "low": 51.5127, "close": 51.5493, "volume": 632970.0}, {"time": "2020-02-10 19:43:00", "open": 51.5493, "high": 51.6653, "low": 51.5487, "close": 51.6093, "volume": 547155.0}, {"time": "2020-02-10 19:44:00", "open": 51.6167, "high": 51.656, "low": 51.5647, "close": 51.5827, "volume": 402675.0}, {"time": "2020-02-10 19:45:00", "open": 51.5963, "high": 51.6467, "low": 51.5127, "close": 51.5598, "volume": 427395.0}, {"time": "2020-02-10 19:46:00", "open": 51.5909, "high": 51.7053, "low": 51.5433, "close": 51.7047, "volume": 574380.0}, {"time": "2020-02-10 19:47:00", "open": 51.6744, "high": 51.8713, "low": 51.664, "close": 51.866, "volume": 964755.0}, {"time": "2020-02-10 19:48:00", "open": 51.8502, "high": 51.8713, "low": 51.7393, "close": 51.8227, "volume": 631560.0}, {"time": "2020-02-10 19:49:00", "open": 51.7673, "high": 51.8593, "low": 51.7673, "close": 51.8452, "volume": 604620.0}, {"time": "2020-02-10 19:50:00", "open": 51.83, "high": 51.8457, "low": 51.734, "close": 51.747, "volume": 485505.0}, {"time": "2020-02-10 19:51:00", "open": 51.7519, "high": 51.7793, "low": 51.6828, "close": 51.7237, "volume": 716025.0}, {"time": "2020-02-10 19:52:00", "open": 51.7225, "high": 51.7292, "low": 51.5513, "close": 51.622, "volume": 633900.0}, {"time": "2020-02-10 19:53:00", "open": 51.6047, "high": 51.7014, "low": 51.6047, "close": 51.6549, "volume": 266670.0}, {"time": "2020-02-10 19:54:00", "open": 51.6453, "high": 51.7907, "low": 51.636, "close": 51.7333, "volume": 653985.0}, {"time": "2020-02-10 19:55:00", "open": 51.7067, "high": 51.7833, "low": 51.7067, "close": 51.7453, "volume": 297315.0}, {"time": "2020-02-10 19:56:00", "open": 51.7269, "high": 51.746, "low": 51.61, "close": 51.6555, "volume": 421545.0}, {"time": "2020-02-10 19:57:00", "open": 51.6352, "high": 51.7267, "low": 51.6073, "close": 51.6573, "volume": 313590.0}, {"time": "2020-02-10 19:58:00", "open": 51.6667, "high": 51.7333, "low": 51.642, "close": 51.7103, "volume": 404010.0}, {"time": "2020-02-10 19:59:00", "open": 51.716, "high": 51.8333, "low": 51.7032, "close": 51.7657, "volume": 755085.0}, {"time": "2020-02-10 20:00:00", "open": 51.7628, "high": 51.822, "low": 51.7, "close": 51.822, "volume": 414600.0}, {"time": "2020-02-10 20:01:00", "open": 51.8183, "high": 51.9333, "low": 51.8, "close": 51.8353, "volume": 1266420.0}, {"time": "2020-02-10 20:02:00", "open": 51.84, "high": 51.8607, "low": 51.7347, "close": 51.8443, "volume": 440415.0}, {"time": "2020-02-10 20:03:00", "open": 51.8667, "high": 51.9147, "low": 51.794, "close": 51.826, "volume": 455505.0}, {"time": "2020-02-10 20:04:00", "open": 51.842, "high": 51.9867, "low": 51.8, "close": 51.8486, "volume": 1019130.0}, {"time": "2020-02-10 20:05:00", "open": 51.8667, "high": 51.8885, "low": 51.8, "close": 51.8453, "volume": 488685.0}, {"time": "2020-02-10 20:06:00", "open": 51.8443, "high": 51.9087, "low": 51.7667, "close": 51.7806, "volume": 598005.0}, {"time": "2020-02-10 20:07:00", "open": 51.8084, "high": 51.826, "low": 51.7013, "close": 51.7827, "volume": 591960.0}, {"time": "2020-02-10 20:08:00", "open": 51.8094, "high": 51.866, "low": 51.7333, "close": 51.8473, "volume": 479610.0}, {"time": "2020-02-10 20:09:00", "open": 51.8235, "high": 51.978, "low": 51.8235, "close": 51.9133, "volume": 713370.0}, {"time": "2020-02-10 20:10:00", "open": 51.9077, "high": 52.2293, "low": 51.9077, "close": 52.1307, "volume": 2550300.0}, {"time": "2020-02-10 20:11:00", "open": 52.1326, "high": 52.2487, "low": 52.0753, "close": 52.162, "volume": 891510.0}, {"time": "2020-02-10 20:12:00", "open": 52.1306, "high": 52.2499, "low": 52.014, "close": 52.014, "volume": 1156845.0}, {"time": "2020-02-10 20:13:00", "open": 52.02, "high": 52.092, "low": 51.9013, "close": 52.0793, "volume": 1057740.0}, {"time": "2020-02-10 20:14:00", "open": 52.0556, "high": 52.1295, "low": 51.8607, "close": 51.874, "volume": 768465.0}, {"time": "2020-02-10 20:15:00", "open": 51.896, "high": 51.986, "low": 51.8067, "close": 51.9456, "volume": 760650.0}, {"time": "2020-02-10 20:16:00", "open": 51.9847, "high": 52.044, "low": 51.9087, "close": 51.9501, "volume": 560145.0}, {"time": "2020-02-10 20:17:00", "open": 51.945, "high": 52.0229, "low": 51.9013, "close": 51.9294, "volume": 408390.0}, {"time": "2020-02-10 20:18:00", "open": 51.912, "high": 52.0887, "low": 51.9007, "close": 52.0189, "volume": 592260.0}, {"time": "2020-02-10 20:19:00", "open": 52.0363, "high": 52.1627, "low": 52.0, "close": 52.156, "volume": 762045.0}, {"time": "2020-02-10 20:20:00", "open": 52.1375, "high": 52.19, "low": 52.0667, "close": 52.1333, "volume": 1011570.0}, {"time": "2020-02-10 20:21:00", "open": 52.1132, "high": 52.3, "low": 52.0796, "close": 52.2467, "volume": 1059300.0}, {"time": "2020-02-10 20:22:00", "open": 52.2218, "high": 52.33, "low": 52.152, "close": 52.2987, "volume": 1244670.0}, {"time": "2020-02-10 20:23:00", "open": 52.2857, "high": 52.3673, "low": 52.18, "close": 52.1836, "volume": 1408905.0}, {"time": "2020-02-10 20:24:00", "open": 52.212, "high": 52.3547, "low": 52.1667, "close": 52.2967, "volume": 702360.0}, {"time": "2020-02-10 20:25:00", "open": 52.3, "high": 52.3, "low": 52.2, "close": 52.2667, "volume": 614235.0}, {"time": "2020-02-10 20:26:00", "open": 52.2537, "high": 52.2833, "low": 52.0213, "close": 52.0667, "volume": 849225.0}, {"time": "2020-02-10 20:27:00", "open": 52.0667, "high": 52.2333, "low": 52.0513, "close": 52.1591, "volume": 531390.0}, {"time": "2020-02-10 20:28:00", "open": 52.164, "high": 52.2447, "low": 52.1133, "close": 52.1739, "volume": 537990.0}, {"time": "2020-02-10 20:29:00", "open": 52.1673, "high": 52.2167, "low": 52.0733, "close": 52.1667, "volume": 454890.0}, {"time": "2020-02-10 20:30:00", "open": 52.2207, "high": 52.2667, "low": 52.0147, "close": 52.0147, "volume": 1026465.0}, {"time": "2020-02-10 20:31:00", "open": 52.0458, "high": 52.0458, "low": 51.6733, "close": 51.7693, "volume": 1906965.0}, {"time": "2020-02-10 20:32:00", "open": 51.7584, "high": 51.8673, "low": 51.678, "close": 51.8133, "volume": 991650.0}, {"time": "2020-02-10 20:33:00", "open": 51.7584, "high": 51.8402, "low": 51.4367, "close": 51.56, "volume": 1996260.0}, {"time": "2020-02-10 20:34:00", "open": 51.5543, "high": 51.7013, "low": 51.4787, "close": 51.6413, "volume": 1268775.0}, {"time": "2020-02-10 20:35:00", "open": 51.6607, "high": 51.6662, "low": 51.38, "close": 51.468, "volume": 975120.0}, {"time": "2020-02-10 20:36:00", "open": 51.4706, "high": 51.6, "low": 51.4167, "close": 51.4813, "volume": 701670.0}, {"time": "2020-02-10 20:37:00", "open": 51.4373, "high": 51.6667, "low": 51.4007, "close": 51.6509, "volume": 1089090.0}, {"time": "2020-02-10 20:38:00", "open": 51.6667, "high": 51.6667, "low": 51.48, "close": 51.5055, "volume": 346125.0}, {"time": "2020-02-10 20:39:00", "open": 51.5473, "high": 51.617, "low": 51.5033, "close": 51.5387, "volume": 403605.0}, {"time": "2020-02-10 20:40:00", "open": 51.5543, "high": 51.6767, "low": 51.5247, "close": 51.6367, "volume": 634665.0}, {"time": "2020-02-10 20:41:00", "open": 51.6597, "high": 51.8, "low": 51.6333, "close": 51.6815, "volume": 926295.0}, {"time": "2020-02-10 20:42:00", "open": 51.7267, "high": 51.7267, "low": 51.5693, "close": 51.5693, "volume": 615930.0}, {"time": "2020-02-10 20:43:00", "open": 51.5643, "high": 51.5931, "low": 51.422, "close": 51.5, "volume": 649050.0}, {"time": "2020-02-10 20:44:00", "open": 51.4733, "high": 51.5033, "low": 51.2, "close": 51.2767, "volume": 1596015.0}, {"time": "2020-02-10 20:45:00", "open": 51.2667, "high": 51.4516, "low": 51.23, "close": 51.2633, "volume": 813480.0}, {"time": "2020-02-10 20:46:00", "open": 51.2787, "high": 51.3033, "low": 51.1493, "close": 51.1607, "volume": 819090.0}, {"time": "2020-02-10 20:47:00", "open": 51.172, "high": 51.2956, "low": 51.1, "close": 51.2043, "volume": 1093590.0}, {"time": "2020-02-10 20:48:00", "open": 51.2, "high": 51.364, "low": 51.2, "close": 51.2367, "volume": 663195.0}, {"time": "2020-02-10 20:49:00", "open": 51.2551, "high": 51.3667, "low": 51.1107, "close": 51.1327, "volume": 774150.0}, {"time": "2020-02-10 20:50:00", "open": 51.166, "high": 51.2975, "low": 51.1147, "close": 51.2253, "volume": 698655.0}, {"time": "2020-02-10 20:51:00", "open": 51.2468, "high": 51.2468, "low": 51.1333, "close": 51.1333, "volume": 519450.0}, {"time": "2020-02-10 20:52:00", "open": 51.1333, "high": 51.1967, "low": 50.9407, "close": 51.0158, "volume": 1351485.0}, {"time": "2020-02-10 20:53:00", "open": 50.9839, "high": 51.0293, "low": 50.912, "close": 50.9613, "volume": 923715.0}, {"time": "2020-02-10 20:54:00", "open": 50.9667, "high": 51.2667, "low": 50.91, "close": 51.2167, "volume": 1277970.0}, {"time": "2020-02-10 20:55:00", "open": 51.262, "high": 51.4615, "low": 51.2067, "close": 51.4414, "volume": 1462035.0}, {"time": "2020-02-10 20:56:00", "open": 51.4248, "high": 51.458, "low": 51.222, "close": 51.4153, "volume": 1052175.0}, {"time": "2020-02-10 20:57:00", "open": 51.41, "high": 51.4147, "low": 51.1467, "close": 51.3116, "volume": 1246920.0}, {"time": "2020-02-10 20:58:00", "open": 51.3198, "high": 51.3333, "low": 51.268, "close": 51.3333, "volume": 1103850.0}, {"time": "2020-02-10 20:59:00", "open": 51.3333, "high": 51.4667, "low": 51.318, "close": 51.3898, "volume": 1743735.0}, {"time": "2020-02-10 21:00:00", "open": 51.4187, "high": 51.4187, "low": 51.38, "close": 51.4013, "volume": 1845255.0}];
+    const markersData = [{"time": "2020-02-10 18:02:00", "position": "aboveBar", "color": "#2196F3", "shape": "arrowDown", "text": "Pole Start\\n18:02"}, {"time": "2020-02-10 19:47:00", "position": "belowBar", "color": "#FF9800", "shape": "arrowUp", "text": "Pole End\\n105.0min\\n19:47"}, {"time": "2020-02-10 20:03:00", "position": "aboveBar", "color": "#9C27B0", "shape": "square", "text": "Convergence End\\n20:03"}, {"time": "2020-02-10 20:04:00", "position": "aboveBar", "color": "#4CAF50", "shape": "circle", "text": "End of Flagpole\\n\\n20:04"}, {"time": "2020-02-10 20:24:00", "position": "aboveBar", "color": "#F44336", "shape": "diamond", "text": "Analysis End\\n0.00%\\n20:24"}];
+    const timingInfo = {"start": "2020-02-10 18:02:00", "end": "2020-02-10 20:04:00", "analysisEnd": "2020-02-10 20:24:00"};
+    const forwardTestData = null;
+    
+    // Helper functions
+    const dateToTimestamp = (dateStr) => {
+        const [datePart, timePart] = dateStr.split(' ');
+        const [year, month, day] = datePart.split('-').map(Number);
+        const [hour, minute, second] = timePart.split(':').map(Number);
+        const utcDate = new Date(Date.UTC(year, month - 1, day, hour, minute, second));
+        return Math.floor(utcDate.getTime() / 1000);
+    };
+    
+    const formatTime = (timestamp) => {
+        const date = new Date(timestamp * 1000);
+        const hours = String(date.getUTCHours()).padStart(2, '0');
+        const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+        return `${hours}:${minutes}`;
+    };
+    
+    const formatDate = (timestamp) => {
+        const date = new Date(timestamp * 1000);
+        const year = date.getUTCFullYear();
+        const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+        const day = String(date.getUTCDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
+    
+    // Wait for DOM and library
+    const initChart = () => {
+        const chartElement = document.getElementById('chart');
+        
+        if (!chartElement) {
+            console.error('Chart element not found');
+            return;
+        }
+        
+        if (typeof window.LightweightCharts === 'undefined') {
+            console.error('LightweightCharts library not loaded');
+            chartElement.innerHTML = '<p style="color: red; padding: 20px;">Error: Chart library not loaded. Please refresh the page.</p>';
+            return;
+        }
+        
+        // Create chart with proper sizing
+        const containerWidth = chartElement.offsetWidth || 800;
+        chartOptions.width = containerWidth;
+        
+        // Height is already properly configured by chart layout system
+        // No need to override here
+        
+        const chart = window.LightweightCharts.createChart(chartElement, chartOptions);
+        
+        // Custom time formatting for axis
+        chart.applyOptions({
+            timeScale: {
+                tickMarkFormatter: (time, tickMarkType) => {
+                    const date = new Date(time * 1000);
+                    
+                    // Different formats based on zoom level
+                    switch(tickMarkType) {
+                        case 0: // Year
+                            return date.getUTCFullYear().toString();
+                        case 1: // Month
+                            return formatDate(time).substring(0, 7);
+                        case 2: // Day
+                            return formatDate(time).substring(5);
+                        default: // Time
+                            return formatTime(time);
+                    }
+                },
+            },
+            localization: {
+                timeFormatter: (timestamp) => {
+                    return `${formatDate(timestamp)} ${formatTime(timestamp)} UTC`;
+                },
+            },
+        });
+        
+        // Create candlestick series
+        const candlestickSeries = chart.addCandlestickSeries({"upColor": "#26a69a", "downColor": "#ef5350", "borderVisible": false, "wickUpColor": "#26a69a", "wickDownColor": "#ef5350", "wickVisible": true});
+        
+        // Set data
+        const formattedData = candlestickData.map(d => ({
+            time: dateToTimestamp(d.time),
+            open: d.open,
+            high: d.high,
+            low: d.low,
+            close: d.close,
+        }));
+        
+        candlestickSeries.setData(formattedData);
+        
+        // Add markers
+        if (markersData.length > 0) {
+            const formattedMarkers = markersData.map(m => ({
+                time: dateToTimestamp(m.time),
+                position: m.position,
+                color: m.color,
+                shape: m.shape,
+                text: m.text,
+            }));
+            
+            candlestickSeries.setMarkers(formattedMarkers);
+        }
+        
+        // Add flagpole zone
+        
+        // Create flagpole zone
+        if (timingInfo.start && timingInfo.end) {
+            const flagpoleAreaSeries = chart.addAreaSeries({
+                topColor: 'rgba(76, 175, 80, 0.2)',
+                bottomColor: 'rgba(76, 175, 80, 0.05)',
+                lineColor: 'rgba(76, 175, 80, 0.5)',
+                lineWidth: 2,
+                crosshairMarkerVisible: false,
+                priceLineVisible: false,
+            });
+            
+            // Get data for flagpole period
+            const startTime = dateToTimestamp(timingInfo.start);
+            const endTime = dateToTimestamp(timingInfo.end);
+            const flagpoleData = formattedData.filter(d => d.time >= startTime && d.time <= endTime);
+            
+            if (flagpoleData.length > 0) {
+                const maxPrice = Math.max(...flagpoleData.map(d => d.high));
+                const areaData = flagpoleData.map(d => ({
+                    time: d.time,
+                    value: maxPrice * 1.02,
+                }));
+                flagpoleAreaSeries.setData(areaData);
+            }
+        }
+        
+        // Create analysis window zone
+        if (timingInfo.analysisEnd) {
+            const analysisAreaSeries = chart.addAreaSeries({
+                topColor: 'rgba(33, 150, 243, 0.1)',
+                bottomColor: 'rgba(33, 150, 243, 0.0)',
+                lineColor: 'rgba(33, 150, 243, 0.3)',
+                lineWidth: 1,
+                crosshairMarkerVisible: false,
+                priceLineVisible: false,
+            });
+            
+            // Get data for analysis period
+            const endTime = dateToTimestamp(timingInfo.end);
+            const analysisEndTime = dateToTimestamp(timingInfo.analysisEnd);
+            const analysisData = formattedData.filter(d => d.time >= endTime && d.time <= analysisEndTime);
+            
+            if (analysisData.length > 0) {
+                const maxPrice = Math.max(...analysisData.map(d => d.high));
+                const areaData = analysisData.map(d => ({
+                    time: d.time,
+                    value: maxPrice * 1.02,
+                }));
+                analysisAreaSeries.setData(areaData);
+            }
+        }
+        
+        
+        // Add legend if forward test data available
+        
+        // Create legend for forward test data
+        if (forwardTestData) {
+            const legend = document.createElement('div');
+            legend.style.cssText = `
+            position: absolute;
+            left: 12px;
+            top: 12px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        `;
+            
+            const isProfitable = forwardTestData.forwardReturn > 0;
+            const signalColor = forwardTestData.signalType === 'BUY' ? 
+                '#4CAF50' : '#F44336';
+            const returnColor = isProfitable ? 
+                '#4CAF50' : '#F44336';
+            
+            legend.innerHTML = `
+                <div style="font-weight: bold; margin-bottom: 6px; color: #333;">Forward Test Results</div>
+                <div style="margin-bottom: 4px;">Signal: <span style="color: ${signalColor};font-weight:bold;">${forwardTestData.signalType}</span></div>
+                <div style="margin-bottom: 4px;">Entry: <span style="font-weight:bold;">$${forwardTestData.entryPrice.toFixed(2)}</span></div>
+                <div style="margin-bottom: 4px;">Exit: <span style="font-weight:bold;">$${forwardTestData.exitPrice.toFixed(2)}</span></div>
+                <div style="margin-bottom: 4px;">Return: <span style="color: ${returnColor};font-weight:bold;">${(forwardTestData.forwardReturn * 100).toFixed(2)}%</span></div>
+                <div>Window: <span style="font-weight:bold;">${forwardTestData.analysisWindow} minutes</span></div>
+            `;
+            
+            chartElement.appendChild(legend);
+        }
+        
+        
+        // Handle window resize
+        const handleResize = () => {
+            const newWidth = chartElement.offsetWidth || 800;
+            chart.applyOptions({ width: newWidth });
+        };
+        
+        window.addEventListener('resize', handleResize);
+        
+        // Fit content and ensure time axis is visible
+        chart.timeScale().fitContent();
+        
+        // Force time scale visibility
+        chart.timeScale().applyOptions({
+            visible: true,
+            borderVisible: true,
+            ticksVisible: true,
+        });
+        
+        // Store chart instance for debugging
+        window.chartInstance = chart;
+        
+        console.log('Chart initialized successfully');
+    };
+    
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initChart);
+    } else {
+        initChart();
+    }
+})();
+</script>
+
+        </div>
+    </div>
+</body>
+</html>
