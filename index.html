@@ -67,6 +67,19 @@
         let currentBestMinima = null;
         let explorationProbes = [];
         
+        // Physics ball properties
+        let ball = {
+            x: 0,
+            y: 50,
+            vx: 2.5,  // horizontal velocity
+            vy: 0,    // vertical velocity
+            radius: 6,
+            gravity: 0.3,
+            damping: 0.8,  // bounce damping
+            friction: 0.99,  // rolling friction
+            trail: []  // trail positions
+        };
+        
         // Generate realistic stock price data with volatility
         function generateStockData() {
             stockPriceData = [];
@@ -107,6 +120,95 @@
         }
         
         generateStockData();
+        
+        // Get stock price at a given x position
+        function getStockPriceAtX(xPos) {
+            const xScale = vizContext.width / stockPriceData.length;
+            const index = Math.floor(xPos / xScale);
+            
+            if (index < 0 || index >= stockPriceData.length - 1) {
+                return null;
+            }
+            
+            // Linear interpolation between points
+            const x1 = index * xScale;
+            const x2 = (index + 1) * xScale;
+            const y1 = stockPriceData[index].normalized;
+            const y2 = stockPriceData[index + 1].normalized;
+            
+            const t = (xPos - x1) / (x2 - x1);
+            return y1 + (y2 - y1) * t;
+        }
+        
+        // Update ball physics
+        function updateBallPhysics() {
+            // Apply gravity
+            ball.vy += ball.gravity;
+            
+            // Apply velocities
+            ball.x += ball.vx;
+            ball.y += ball.vy;
+            
+            // Get stock price at ball position
+            const stockY = getStockPriceAtX(ball.x);
+            
+            if (stockY !== null) {
+                // Check for collision with stock line
+                if (ball.y + ball.radius >= stockY) {
+                    // Place ball on surface
+                    ball.y = stockY - ball.radius;
+                    
+                    // Calculate slope for rolling physics
+                    const nextY = getStockPriceAtX(ball.x + 1);
+                    const prevY = getStockPriceAtX(ball.x - 1);
+                    
+                    if (nextY !== null && prevY !== null) {
+                        const slope = (nextY - prevY) / 2;
+                        
+                        // Apply slope acceleration
+                        ball.vx += slope * 0.1;
+                        
+                        // Bounce if hitting with velocity
+                        if (ball.vy > 0.5) {
+                            ball.vy = -ball.vy * ball.damping;
+                            
+                            // Add some horizontal movement on bounce
+                            ball.vx += (Math.random() - 0.5) * 0.5;
+                        } else {
+                            // Rolling on surface
+                            ball.vy = 0;
+                        }
+                    }
+                }
+            }
+            
+            // Apply friction
+            ball.vx *= ball.friction;
+            
+            // Boundary checks
+            if (ball.x < 0) {
+                ball.x = 0;
+                ball.vx = Math.abs(ball.vx) * 0.8;
+            } else if (ball.x > vizContext.width) {
+                ball.x = vizContext.width;
+                ball.vx = -Math.abs(ball.vx) * 0.8;
+            }
+            
+            // Add to trail
+            ball.trail.push({ x: ball.x, y: ball.y });
+            if (ball.trail.length > 30) {
+                ball.trail.shift();
+            }
+            
+            // Reset if ball falls off screen
+            if (ball.y > vizContext.height + 50) {
+                ball.x = Math.random() * vizContext.width;
+                ball.y = 0;
+                ball.vx = (Math.random() - 0.5) * 4;
+                ball.vy = 0;
+                ball.trail = [];
+            }
+        }
         
         // Draw stock market data and optimization process
         function drawStockOptimization(ctx, canvas, progress) {
@@ -251,13 +353,74 @@
                 ctx.fillText('MIN', x, currentBestMinima.y - 10);
             }
             
+            // Draw physics ball
+            if (progress > 5) {  // Start showing ball after initial setup
+                // Draw trail
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ball.trail.forEach((pos, i) => {
+                    if (i === 0) {
+                        ctx.moveTo(pos.x, pos.y);
+                    } else {
+                        ctx.lineTo(pos.x, pos.y);
+                    }
+                });
+                ctx.stroke();
+                
+                // Draw ball shadow
+                ctx.beginPath();
+                ctx.arc(ball.x, ball.y + 2, ball.radius + 2, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+                ctx.fill();
+                
+                // Draw ball
+                const ballGradient = ctx.createRadialGradient(
+                    ball.x - ball.radius / 3, 
+                    ball.y - ball.radius / 3, 
+                    0,
+                    ball.x, 
+                    ball.y, 
+                    ball.radius
+                );
+                ballGradient.addColorStop(0, 'rgba(255, 255, 255, 0.9)');
+                ballGradient.addColorStop(0.5, 'rgba(220, 220, 220, 0.8)');
+                ballGradient.addColorStop(1, 'rgba(180, 180, 180, 0.7)');
+                
+                ctx.beginPath();
+                ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+                ctx.fillStyle = ballGradient;
+                ctx.fill();
+                
+                // Ball outline
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                
+                // Highlight when ball is in a minima
+                candidatePoints.filter(c => c.isMinima).forEach(minima => {
+                    const xScale = vizContext.width / stockPriceData.length;
+                    const minimaX = minima.x * xScale;
+                    const distance = Math.abs(ball.x - minimaX);
+                    
+                    if (distance < 20 && Math.abs(ball.y - minima.y + ball.radius) < 10) {
+                        // Ball is near a minima - add glow effect
+                        ctx.beginPath();
+                        ctx.arc(ball.x, ball.y, ball.radius + 5, 0, Math.PI * 2);
+                        ctx.strokeStyle = 'rgba(46, 125, 50, 0.6)';
+                        ctx.lineWidth = 2;
+                        ctx.stroke();
+                    }
+                });
+            }
+            
             // Draw enhanced legend with backgrounds
             ctx.font = '11px Inter';
             ctx.textAlign = 'left';
             
             // Legend background
             ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
-            ctx.fillRect(5, 5, 120, 55);
+            ctx.fillRect(5, 5, 120, 72);
             
             // Price line indicator
             ctx.strokeStyle = 'rgba(100, 149, 237, 0.9)';
@@ -288,6 +451,17 @@
             ctx.fill();
             ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
             ctx.fillText('Local Minima', 35, 50);
+            
+            // Ball indicator
+            ctx.beginPath();
+            ctx.arc(20, 61, 4, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(200, 200, 200, 0.6)';
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+            ctx.fillText('Optimizer', 35, 64);
         }
         
         // Update optimization based on progress
@@ -449,6 +623,7 @@
         // Continuous animation loop for the visualization
         function animateVisualization() {
             if (vizContext && vizContext.ctx && vizContext.canvas) {
+                updateBallPhysics();  // Update ball physics every frame
                 drawStockOptimization(vizContext.ctx, vizContext.canvas, (currentStep / steps.length) * 100);
                 requestAnimationFrame(animateVisualization);
             }
