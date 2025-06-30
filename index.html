@@ -41,19 +41,161 @@
         const experimentList = document.getElementById('experiment-list');
         const experimentsDiscovered = document.getElementById('experiments-discovered');
         
-        // Generate random pattern visualization with animation delay
-        function generatePatternBars() {
-            const bars = [];
-            for (let i = 0; i < 50; i++) {
-                const height = Math.random() * 80 + 20;
-                const isHighlight = Math.random() > 0.85;
-                const delay = i * 20; // Stagger animations
-                bars.push(`<div class="pattern-bar ${isHighlight ? 'highlight' : ''}" style="height: ${height}%; animation-delay: ${delay}ms"></div>`);
-            }
-            return bars.join('');
+        // Initialize optimization landscape visualization
+        function initializeOptimizationViz() {
+            const canvas = document.createElement('canvas');
+            canvas.id = 'optimization-canvas';
+            canvas.width = patternViz.offsetWidth || 800;
+            canvas.height = 200;
+            patternViz.appendChild(canvas);
+            
+            const ctx = canvas.getContext('2d');
+            
+            // Create gradient background
+            const bgGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            bgGradient.addColorStop(0, 'rgba(0, 212, 163, 0.05)');
+            bgGradient.addColorStop(1, 'rgba(14, 165, 233, 0.05)');
+            ctx.fillStyle = bgGradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            return { canvas, ctx };
         }
         
-        patternViz.innerHTML = generatePatternBars();
+        const vizContext = initializeOptimizationViz();
+        let optimizationPath = [];
+        let particles = [];
+        
+        // Create optimization landscape with peaks and valleys
+        function drawOptimizationLandscape(ctx, canvas, progress) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Background gradient
+            const bgGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            bgGradient.addColorStop(0, 'rgba(0, 212, 163, 0.05)');
+            bgGradient.addColorStop(1, 'rgba(14, 165, 233, 0.05)');
+            ctx.fillStyle = bgGradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw grid lines
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+            ctx.lineWidth = 1;
+            for (let i = 0; i < 10; i++) {
+                const x = (canvas.width / 10) * i;
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+            }
+            
+            // Draw optimization function landscape
+            ctx.beginPath();
+            ctx.moveTo(0, canvas.height / 2);
+            
+            const points = 100;
+            for (let i = 0; i <= points; i++) {
+                const x = (canvas.width / points) * i;
+                const baseY = canvas.height / 2;
+                
+                // Create multiple peaks representing local optima
+                const peak1 = 30 * Math.exp(-Math.pow((i - 20) / 10, 2));
+                const peak2 = 50 * Math.exp(-Math.pow((i - 50) / 15, 2));
+                const peak3 = 70 * Math.exp(-Math.pow((i - 80) / 12, 2)); // Global optimum
+                
+                const y = baseY - peak1 - peak2 - peak3 + 10 * Math.sin(i / 5);
+                ctx.lineTo(x, y);
+            }
+            
+            // Fill under the curve
+            ctx.lineTo(canvas.width, canvas.height);
+            ctx.lineTo(0, canvas.height);
+            ctx.closePath();
+            
+            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            gradient.addColorStop(0, 'rgba(0, 212, 163, 0.2)');
+            gradient.addColorStop(1, 'rgba(0, 212, 163, 0.02)');
+            ctx.fillStyle = gradient;
+            ctx.fill();
+            
+            // Draw the optimization path
+            if (optimizationPath.length > 1) {
+                ctx.strokeStyle = '#00D4A3';
+                ctx.lineWidth = 2;
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = '#00D4A3';
+                
+                ctx.beginPath();
+                ctx.moveTo(optimizationPath[0].x, optimizationPath[0].y);
+                
+                for (let i = 1; i < optimizationPath.length; i++) {
+                    const point = optimizationPath[i];
+                    ctx.lineTo(point.x, point.y);
+                }
+                ctx.stroke();
+                
+                // Draw current position
+                const currentPoint = optimizationPath[optimizationPath.length - 1];
+                ctx.beginPath();
+                ctx.arc(currentPoint.x, currentPoint.y, 6, 0, Math.PI * 2);
+                ctx.fillStyle = '#00D4A3';
+                ctx.fill();
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
+                ctx.shadowBlur = 0;
+            }
+            
+            // Draw exploring particles
+            particles.forEach(particle => {
+                ctx.beginPath();
+                ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(0, 212, 163, ${particle.opacity})`;
+                ctx.fill();
+                
+                // Update particle position
+                particle.x += particle.vx;
+                particle.y += particle.vy;
+                particle.opacity *= 0.98;
+                particle.size *= 0.99;
+            });
+            
+            // Remove faded particles
+            particles = particles.filter(p => p.opacity > 0.01);
+            
+            // Add new particles occasionally
+            if (Math.random() < 0.3 && particles.length < 20) {
+                const currentPoint = optimizationPath[optimizationPath.length - 1] || { x: 0, y: canvas.height / 2 };
+                particles.push({
+                    x: currentPoint.x,
+                    y: currentPoint.y,
+                    vx: (Math.random() - 0.5) * 2,
+                    vy: (Math.random() - 0.5) * 2,
+                    size: Math.random() * 3 + 1,
+                    opacity: 0.6
+                });
+            }
+        }
+        
+        // Update optimization path based on progress
+        function updateOptimizationPath(progress) {
+            const canvas = vizContext.canvas;
+            const x = (canvas.width / 100) * progress;
+            
+            // Calculate y position on the landscape
+            const baseY = canvas.height / 2;
+            const i = progress;
+            const peak1 = 30 * Math.exp(-Math.pow((i - 20) / 10, 2));
+            const peak2 = 50 * Math.exp(-Math.pow((i - 50) / 15, 2));
+            const peak3 = 70 * Math.exp(-Math.pow((i - 80) / 12, 2));
+            const y = baseY - peak1 - peak2 - peak3 + 10 * Math.sin(i / 5);
+            
+            optimizationPath.push({ x, y });
+            
+            // Keep only recent points for performance
+            if (optimizationPath.length > 100) {
+                optimizationPath.shift();
+            }
+        }
         
         // Add particle effects
         function createParticles() {
@@ -86,10 +228,9 @@
                     showExperiment(experiments[step.showExperiment]);
                 }
                 
-                // Regenerate pattern visualization occasionally
-                if (currentStep % 3 === 0) {
-                    patternViz.innerHTML = generatePatternBars();
-                }
+                // Update optimization visualization
+                updateOptimizationPath(step.progress);
+                drawOptimizationLandscape(vizContext.ctx, vizContext.canvas, step.progress);
                 
                 currentStep++;
                 setTimeout(animateStep, 600);
@@ -160,8 +301,17 @@
             experimentList.appendChild(expDiv);
         }
         
-        // Start animation
+        // Continuous animation loop for the visualization
+        function animateVisualization() {
+            if (vizContext && vizContext.ctx && vizContext.canvas) {
+                drawOptimizationLandscape(vizContext.ctx, vizContext.canvas, (currentStep / steps.length) * 100);
+                requestAnimationFrame(animateVisualization);
+            }
+        }
+        
+        // Start animations
         setTimeout(animateStep, 500);
+        animateVisualization();
     };
     </script>
 </head>
@@ -178,7 +328,9 @@
                 <div class="ticker-badge">TSLA</div>
             </div>
             
-            <div class="pattern-visualization" id="pattern-viz"></div>
+            <div class="pattern-visualization" id="pattern-viz">
+                <div class="viz-title">Optimization Landscape Explorer</div>
+            </div>
             
             <div class="progress-container">
                 <div class="progress-bar">
