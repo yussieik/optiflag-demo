@@ -70,16 +70,17 @@
         let ball = {
             x: 0,
             y: 50,
-            vx: 2.5,  // horizontal velocity
+            vx: 1.5,  // horizontal velocity (reduced for smoother rolling)
             vy: 0,    // vertical velocity
             radius: 6,
-            gravity: 0.3,
-            damping: 0.8,  // bounce damping
-            friction: 0.99,  // rolling friction
+            gravity: 0.2,  // reduced gravity for less bouncing
+            damping: 0.4,  // reduced bounce damping for minimal bouncing
+            friction: 0.98,  // slightly more friction for controlled rolling
             trail: [],  // trail positions
             stuckCounter: 0,  // counter to detect when ball is stuck
             lastX: 0,  // track last X position
-            escapeBoost: 5  // upward boost to escape holes
+            escapeBoost: 6,  // upward boost to escape holes
+            onSurface: false  // track if ball is on the surface
         };
         
         // Generate realistic stock price data with volatility
@@ -161,42 +162,61 @@
                     ball.y = stockY - ball.radius;
                     
                     // Calculate slope for rolling physics
-                    const nextY = getStockPriceAtX(ball.x + 1);
-                    const prevY = getStockPriceAtX(ball.x - 1);
+                    const nextY = getStockPriceAtX(ball.x + 2);
+                    const prevY = getStockPriceAtX(ball.x - 2);
                     
                     if (nextY !== null && prevY !== null) {
-                        const slope = (nextY - prevY) / 2;
+                        const slope = (nextY - prevY) / 4;
                         
-                        // Apply slope acceleration
-                        ball.vx += slope * 0.1;
+                        // Apply slope acceleration for rolling (reduced for smoother motion)
+                        ball.vx += slope * 0.05;
                         
-                        // Bounce if hitting with velocity
-                        if (ball.vy > 0.5) {
+                        // Only bounce if hitting with significant velocity
+                        if (ball.vy > 2.0 && !ball.onSurface) {
+                            // Minimal bounce
                             ball.vy = -ball.vy * ball.damping;
-                            
-                            // Add some horizontal movement on bounce
-                            ball.vx += (Math.random() - 0.5) * 0.5;
                         } else {
-                            // Rolling on surface
+                            // Rolling on surface - keep ball grounded
                             ball.vy = 0;
+                            ball.onSurface = true;
+                            
+                            // Adjust position to follow the curve smoothly
+                            const currentY = getStockPriceAtX(ball.x);
+                            if (currentY !== null) {
+                                ball.y = currentY - ball.radius;
+                            }
                         }
                     }
+                } else {
+                    // Ball is in the air
+                    ball.onSurface = false;
                 }
             }
             
             // Apply friction
             ball.vx *= ball.friction;
             
-            // Detect if ball is stuck in a hole (not moving much horizontally)
-            const movementThreshold = 0.5;
-            if (Math.abs(ball.x - ball.lastX) < movementThreshold && Math.abs(ball.vx) < movementThreshold) {
+            // Detect if ball is stuck in a local minima
+            const movementThreshold = 0.3;
+            const isInValley = ball.onSurface && Math.abs(ball.vx) < movementThreshold;
+            
+            if (isInValley && Math.abs(ball.x - ball.lastX) < movementThreshold) {
                 ball.stuckCounter++;
                 
-                // If stuck for too long, give it an escape boost
-                if (ball.stuckCounter > 30) {
+                // Check if we're actually in a local minimum by examining nearby slopes
+                const leftY = getStockPriceAtX(ball.x - 5);
+                const rightY = getStockPriceAtX(ball.x + 5);
+                const currentY = getStockPriceAtX(ball.x);
+                
+                const isLocalMinima = leftY !== null && rightY !== null && currentY !== null &&
+                                    leftY < currentY && rightY < currentY;
+                
+                // If stuck in a local minima for too long, jump out
+                if (ball.stuckCounter > 40 && isLocalMinima) {
                     ball.vy = -ball.escapeBoost;  // Jump upward
-                    ball.vx = (Math.random() - 0.5) * 3;  // Random horizontal direction
+                    ball.vx = (Math.random() - 0.5) * 2 + Math.sign(Math.random() - 0.5) * 1;  // Directional bias
                     ball.stuckCounter = 0;
+                    ball.onSurface = false;
                 }
             } else {
                 ball.stuckCounter = 0;
@@ -223,11 +243,12 @@
             if (ball.y > vizContext.height + 50) {
                 ball.x = Math.random() * vizContext.width;
                 ball.y = 0;
-                ball.vx = (Math.random() - 0.5) * 4;
+                ball.vx = (Math.random() - 0.5) * 2;  // Reduced initial velocity
                 ball.vy = 0;
                 ball.trail = [];
                 ball.stuckCounter = 0;
                 ball.lastX = 0;
+                ball.onSurface = false;
             }
         }
         
