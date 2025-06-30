@@ -145,15 +145,11 @@
                 ctx.stroke();
             }
             
-            // Draw stock price line with gradient
-            const priceGradient = ctx.createLinearGradient(0, 0, vizContext.width, 0);
-            priceGradient.addColorStop(0, 'rgba(59, 130, 246, 0.8)');
-            priceGradient.addColorStop(0.5, 'rgba(147, 51, 234, 0.8)');
-            priceGradient.addColorStop(1, 'rgba(236, 72, 153, 0.8)');
-            ctx.strokeStyle = priceGradient;
-            ctx.lineWidth = 2.5;
-            ctx.shadowBlur = 4;
-            ctx.shadowColor = 'rgba(147, 51, 234, 0.3)';
+            // Draw stock price line - clean scientific style
+            ctx.strokeStyle = 'rgba(100, 149, 237, 0.9)'; // Cornflower blue
+            ctx.lineWidth = 2;
+            ctx.shadowBlur = 2;
+            ctx.shadowColor = 'rgba(100, 149, 237, 0.2)';
             ctx.beginPath();
             
             const xScale = vizContext.width / stockPriceData.length;
@@ -169,11 +165,6 @@
             });
             ctx.stroke();
             
-            // Add glow under the line
-            ctx.strokeStyle = 'rgba(147, 51, 234, 0.2)';
-            ctx.lineWidth = 8;
-            ctx.stroke();
-            
             // Reset shadow
             ctx.shadowBlur = 0;
             
@@ -183,43 +174,30 @@
                 const gradient = ctx.createRadialGradient(x, candidate.y, 0, x, candidate.y, 30);
                 
                 if (candidate.isMinima) {
-                    // Vibrant green-cyan glow for detected minima
-                    gradient.addColorStop(0, 'rgba(0, 255, 163, 0.4)');
-                    gradient.addColorStop(0.5, 'rgba(0, 212, 163, 0.2)');
-                    gradient.addColorStop(1, 'rgba(0, 212, 163, 0)');
+                    // Scientific green for detected minima
+                    gradient.addColorStop(0, 'rgba(46, 125, 50, 0.3)');
+                    gradient.addColorStop(0.5, 'rgba(46, 125, 50, 0.15)');
+                    gradient.addColorStop(1, 'rgba(46, 125, 50, 0)');
                 } else {
-                    // Purple-blue glow for exploration
-                    gradient.addColorStop(0, 'rgba(124, 58, 237, 0.3)');
-                    gradient.addColorStop(0.5, 'rgba(59, 130, 246, 0.15)');
-                    gradient.addColorStop(1, 'rgba(59, 130, 246, 0)');
+                    // Neutral gray for exploration areas
+                    gradient.addColorStop(0, 'rgba(158, 158, 158, 0.2)');
+                    gradient.addColorStop(0.5, 'rgba(158, 158, 158, 0.1)');
+                    gradient.addColorStop(1, 'rgba(158, 158, 158, 0)');
                 }
                 
                 ctx.fillStyle = gradient;
                 ctx.fillRect(x - 30, 0, 60, vizContext.height);
             });
             
-            // Draw exploration probes with animated colors
-            const probeTime = Date.now() / 1000;
-            ctx.lineWidth = 1;
+            // Draw subtle exploration indicators
+            ctx.lineWidth = 0.5;
             ctx.setLineDash([2, 4]);
+            ctx.strokeStyle = 'rgba(189, 189, 189, 0.3)';
             
             explorationProbes.forEach(probe => {
                 const x = probe.x * xScale;
                 
-                // Draw acquisition function value
-                const acquisitionHeight = probe.acquisition * 60;
-                const hue = (probeTime * 50 + probe.x * 2) % 360;
-                
-                // Gradient for acquisition bars
-                const acqGradient = ctx.createLinearGradient(x, vizContext.height, x, vizContext.height - acquisitionHeight);
-                acqGradient.addColorStop(0, `hsla(${hue}, 70%, 50%, 0.1)`);
-                acqGradient.addColorStop(1, `hsla(${hue}, 70%, 50%, 0.6)`);
-                
-                ctx.fillStyle = acqGradient;
-                ctx.fillRect(x - 3, vizContext.height - acquisitionHeight, 6, acquisitionHeight);
-                
-                // Animated probe line
-                ctx.strokeStyle = `hsla(${hue}, 70%, 60%, 0.4)`;
+                // Just draw subtle vertical lines for exploration points
                 ctx.beginPath();
                 ctx.moveTo(x, 0);
                 ctx.lineTo(x, vizContext.height);
@@ -231,37 +209,30 @@
             candidatePoints.filter(c => c.isMinima).forEach(minima => {
                 const x = minima.x * xScale;
                 
-                // Draw vertical line
-                ctx.strokeStyle = 'rgba(0, 212, 163, 0.8)';
-                ctx.lineWidth = 2;
+                // Draw subtle vertical line
+                ctx.strokeStyle = 'rgba(46, 125, 50, 0.5)';
+                ctx.lineWidth = 1;
                 ctx.beginPath();
-                ctx.moveTo(x, minima.y - 20);
-                ctx.lineTo(x, minima.y + 20);
+                ctx.moveTo(x, minima.y - 10);
+                ctx.lineTo(x, minima.y + 10);
                 ctx.stroke();
                 
-                // Draw glowing circle at minima
-                const glowSize = 8 + Math.sin(Date.now() / 200) * 2;
+                // Draw small professional circle at minima
+                const pulseSize = 4 + Math.sin(Date.now() / 300) * 1;
                 
-                // Outer glow layers
-                for (let i = 3; i > 0; i--) {
-                    ctx.beginPath();
-                    ctx.arc(x, minima.y, glowSize * i, 0, Math.PI * 2);
-                    ctx.fillStyle = `rgba(0, 255, 163, ${0.1 / i})`;
-                    ctx.fill();
-                }
-                
-                // Main circle with gradient
-                const circleGradient = ctx.createRadialGradient(x, minima.y - 3, 0, x, minima.y, 8);
-                circleGradient.addColorStop(0, 'rgba(255, 255, 255, 0.9)');
-                circleGradient.addColorStop(0.5, '#00FFB3');
-                circleGradient.addColorStop(1, '#00D4A3');
-                
+                // Subtle outer glow
                 ctx.beginPath();
-                ctx.arc(x, minima.y, 8, 0, Math.PI * 2);
-                ctx.fillStyle = circleGradient;
+                ctx.arc(x, minima.y, pulseSize + 4, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(46, 125, 50, 0.1)';
                 ctx.fill();
-                ctx.strokeStyle = 'rgba(0, 255, 179, 0.8)';
-                ctx.lineWidth = 2;
+                
+                // Main circle - smaller and more professional
+                ctx.beginPath();
+                ctx.arc(x, minima.y, 4, 0, Math.PI * 2);
+                ctx.fillStyle = '#2E7D32'; // Forest green
+                ctx.fill();
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+                ctx.lineWidth = 1;
                 ctx.stroke();
             });
             
@@ -269,15 +240,15 @@
             if (currentBestMinima) {
                 const x = currentBestMinima.x * xScale;
                 
-                // Highlight box
-                ctx.fillStyle = 'rgba(0, 212, 163, 0.1)';
-                ctx.fillRect(x - 20, 0, 40, vizContext.height);
+                // Subtle highlight
+                ctx.fillStyle = 'rgba(46, 125, 50, 0.08)';
+                ctx.fillRect(x - 15, 0, 30, vizContext.height);
                 
-                // Label
-                ctx.fillStyle = '#00D4A3';
-                ctx.font = '11px Inter';
+                // Professional label
+                ctx.fillStyle = '#2E7D32';
+                ctx.font = '10px Inter';
                 ctx.textAlign = 'center';
-                ctx.fillText('OPTIMAL', x, currentBestMinima.y - 15);
+                ctx.fillText('MIN', x, currentBestMinima.y - 10);
             }
             
             // Draw enhanced legend with backgrounds
@@ -289,25 +260,31 @@
             ctx.fillRect(5, 5, 120, 55);
             
             // Price line indicator
-            ctx.strokeStyle = priceGradient;
+            ctx.strokeStyle = 'rgba(100, 149, 237, 0.9)';
             ctx.lineWidth = 2;
             ctx.beginPath();
             ctx.moveTo(10, 20);
             ctx.lineTo(30, 20);
             ctx.stroke();
             ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
-            ctx.fillText('Price History', 35, 23);
+            ctx.fillText('Price Data', 35, 23);
             
             // Exploration indicator
-            ctx.fillStyle = 'rgba(124, 58, 237, 0.6)';
-            ctx.fillRect(10, 30, 20, 3);
+            ctx.strokeStyle = 'rgba(189, 189, 189, 0.5)';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([2, 2]);
+            ctx.beginPath();
+            ctx.moveTo(10, 33);
+            ctx.lineTo(30, 33);
+            ctx.stroke();
+            ctx.setLineDash([]);
             ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
-            ctx.fillText('Exploration', 35, 35);
+            ctx.fillText('Search Area', 35, 35);
             
             // Minima indicator
             ctx.beginPath();
-            ctx.arc(20, 47, 4, 0, Math.PI * 2);
-            ctx.fillStyle = '#00FFB3';
+            ctx.arc(20, 47, 3, 0, Math.PI * 2);
+            ctx.fillStyle = '#2E7D32';
             ctx.fill();
             ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
             ctx.fillText('Local Minima', 35, 50);
