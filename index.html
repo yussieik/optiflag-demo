@@ -136,13 +136,12 @@
                     <span class="experiment-winrate">Win: ${experiment.winRate.toFixed(1)}%</span>
                 </div>
             `;
-            expDiv.style.opacity = '0';
-            experimentList.appendChild(expDiv);
             
-            // Fade in the new experiment
-            setTimeout(() => {
-                expDiv.style.opacity = '1';
-            }, 50);
+            // Add stagger delay based on how many experiments are already shown
+            const existingExperiments = experimentList.querySelectorAll('.experiment-item').length;
+            expDiv.style.animationDelay = `${existingExperiments * 0.1}s`;
+            
+            experimentList.appendChild(expDiv);
         }
         
         // Start animation
@@ -190,6 +189,10 @@
             <div id="experiments-discovered" class="experiments-discovered">
                 <h3>Top Experiments Discovered</h3>
                 <div id="experiment-list" class="experiment-list"></div>
+            </div>
+            
+            <div class="discovery-note">
+                <p>Discovering optimal trading parameters through Bayesian optimization...</p>
             </div>
         </div>
     </div>

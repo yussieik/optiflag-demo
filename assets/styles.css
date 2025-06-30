@@ -1943,6 +1943,8 @@ tr:hover {
     padding: var(--space-2xl);
     box-shadow: var(--shadow-large);
     animation: fadeInUp 0.8s ease-out 0.2s both;
+    max-height: 80vh;
+    overflow-y: auto;
 }
 
 .optimization-header {
@@ -2068,6 +2070,7 @@ tr:hover {
 .experiments-discovered {
     margin-top: var(--space-2xl);
     display: none;
+    min-height: 300px;
 }
 
 .experiments-discovered h3 {
@@ -2092,7 +2095,9 @@ tr:hover {
     border-radius: var(--radius-md);
     padding: var(--space-lg);
     transition: all 0.3s ease;
-    opacity: 1;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: slideInUp 0.5s ease-out forwards;
 }
 
 .experiment-item:hover {
@@ -2217,4 +2222,29 @@ tr:hover {
         opacity: 0;
         transform: translateY(0) scale(0);
     }
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Discovery Note */
+.discovery-note {
+    text-align: center;
+    margin-top: var(--space-xl);
+    opacity: 0.7;
+}
+
+.discovery-note p {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    font-style: italic;
+    margin: 0;
 }
