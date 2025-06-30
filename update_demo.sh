@@ -9,7 +9,7 @@ echo "🔄 OptiFlag Demo Update Script"
 echo "=============================="
 
 # Configuration
-REPORTS_DIR="data_cut/samples/optimizer_experiments_per_ticker_batched/html_reports"
+REPORTS_DIR="data_cut/samples/html_reports"
 DEMO_DIR="optiflag-demo"
 REPO_NAME="optiflag-demo"
 GITHUB_USER=$(gh api user --jq .login 2>/dev/null || echo "")

@@ -152,7 +152,7 @@
         
         candlestickSeries.setData(formattedData);
         
-        // Add markers
+        // Add markers with enhanced visibility
         if (markersData.length > 0) {
             const formattedMarkers = markersData.map(m => ({
                 time: dateToTimestamp(m.time),
@@ -160,9 +160,17 @@
                 color: m.color,
                 shape: m.shape,
                 text: m.text,
+                size: 2,  // Larger marker size
             }));
             
             candlestickSeries.setMarkers(formattedMarkers);
+            
+            // Apply custom styling for marker text
+            chart.applyOptions({
+                layout: {
+                    fontSize: 16,  // Increase marker text font size
+                },
+            });
         }
         
         // Add flagpole zone
@@ -170,9 +178,9 @@
         // Create flagpole zone
         if (timingInfo.start && timingInfo.end) {
             const flagpoleAreaSeries = chart.addAreaSeries({
-                topColor: 'rgba(0, 212, 163, 0.3)',
-                bottomColor: 'rgba(0, 212, 163, 0.1)',
-                lineColor: 'rgba(0, 212, 163, 0.7)',
+                topColor: 'rgba(0, 212, 163, 0.4)',
+                bottomColor: 'rgba(0, 212, 163, 0.15)',
+                lineColor: 'rgba(0, 212, 163, 0.8)',
                 lineWidth: 2,
                 crosshairMarkerVisible: false,
                 priceLineVisible: false,
@@ -196,9 +204,9 @@
         // Create analysis window zone
         if (timingInfo.analysisEnd) {
             const analysisAreaSeries = chart.addAreaSeries({
-                topColor: 'rgba(14, 165, 233, 0.2)',
-                bottomColor: 'rgba(14, 165, 233, 0.05)',
-                lineColor: 'rgba(14, 165, 233, 0.5)',
+                topColor: 'rgba(0, 212, 163, 0.25)',
+                bottomColor: 'rgba(0, 212, 163, 0.08)',
+                lineColor: 'rgba(0, 212, 163, 0.5)',
                 lineWidth: 1,
                 crosshairMarkerVisible: false,
                 priceLineVisible: false,
@@ -258,6 +266,108 @@
             
             chartElement.appendChild(legend);
         }
+        
+        
+        // Add info box with flagpole details
+        
+        // Create info box with flagpole details
+        const createInfoBox = () => {
+            const infoBox = document.createElement('div');
+            infoBox.id = 'flagpole-info-box';
+            infoBox.style.cssText = `
+                position: absolute;
+                left: 16px;
+                top: 16px;
+                background: rgba(11, 20, 38, 0.95);
+                padding: 16px;
+                border-radius: 8px;
+                font-size: 13px;
+                font-family: 'JetBrains Mono', 'SF Mono', 'Monaco', 'Consolas', monospace;
+                font-weight: 500;
+                color: #F8FAFC;
+                border: 1px solid #334155;
+                z-index: 1000;
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3), 0 0 20px rgba(0, 212, 163, 0.1);
+                min-width: 280px;
+            `;
+            
+            // Get pole start and end times/prices from markers
+            let poleStartPrice = 'N/A';
+            let poleEndPrice = 'N/A';
+            let entryPrice = 'N/A';
+            let exitPrice = 'N/A';
+            let orderType = 'N/A';
+            
+            // Find prices from markers
+            if (markersData && markersData.length > 0) {
+                markersData.forEach(marker => {
+                    if (marker.text.includes('Pole Start')) {
+                        // Get price from candlestick data at this time
+                        const markerTime = dateToTimestamp(marker.time);
+                        const candle = formattedData.find(d => Math.abs(d.time - markerTime) < 60);
+                        if (candle) poleStartPrice = '$' + candle.close.toFixed(2);
+                    }
+                    if (marker.text.includes('Pole End')) {
+                        const markerTime = dateToTimestamp(marker.time);
+                        const candle = formattedData.find(d => Math.abs(d.time - markerTime) < 60);
+                        if (candle) poleEndPrice = '$' + candle.close.toFixed(2);
+                    }
+                    if (marker.text.includes('Entry:')) {
+                        const match = marker.text.match(/\$([0-9.]+)/);
+                        if (match) entryPrice = '$' + match[1];
+                        // Extract order type
+                        if (marker.text.includes('BUY')) orderType = 'BUY';
+                        else if (marker.text.includes('SHORT')) orderType = 'SHORT';
+                        else if (marker.text.includes('NEUTRAL')) orderType = 'NEUTRAL';
+                    }
+                    if (marker.text.includes('Exit:')) {
+                        const match = marker.text.match(/\$([0-9.]+)/);
+                        if (match) exitPrice = '$' + match[1];
+                    }
+                });
+            }
+            
+            // Use forward test data if available
+            if (forwardTestData) {
+                entryPrice = '$' + forwardTestData.entryPrice.toFixed(2);
+                exitPrice = '$' + forwardTestData.exitPrice.toFixed(2);
+                orderType = forwardTestData.signalType || orderType;
+            }
+            
+            infoBox.innerHTML = `
+                <div style="font-weight: bold; margin-bottom: 12px; color: #00D4A3; font-size: 14px;">
+                    Flagpole Information
+                </div>
+                <div style="display: grid; grid-template-columns: auto 1fr; gap: 8px 16px;">
+                    <div style="color: #94A3B8;">Pole Start:</div>
+                    <div style="color: #F8FAFC;">
+                        <span style="font-weight: bold;">${timingInfo.start ? formatTime(dateToTimestamp(timingInfo.start)) : 'N/A'}</span>
+                        <span style="color: #0EA5E9; margin-left: 8px;">${poleStartPrice}</span>
+                    </div>
+                    
+                    <div style="color: #94A3B8;">Pole End:</div>
+                    <div style="color: #F8FAFC;">
+                        <span style="font-weight: bold;">${timingInfo.end ? formatTime(dateToTimestamp(timingInfo.end)) : 'N/A'}</span>
+                        <span style="color: #0EA5E9; margin-left: 8px;">${poleEndPrice}</span>
+                    </div>
+                    
+                    <div style="color: #94A3B8; margin-top: 8px;">Entry:</div>
+                    <div style="color: #F8FAFC; margin-top: 8px;">
+                        <span style="font-weight: bold; color: #00D4A3;">${entryPrice}</span>
+                        <span style="color: #FFC107; margin-left: 12px; font-weight: bold;">${orderType}</span>
+                    </div>
+                    
+                    <div style="color: #94A3B8;">Exit:</div>
+                    <div style="color: #F8FAFC;">
+                        <span style="font-weight: bold; color: #FF4757;">${exitPrice}</span>
+                    </div>
+                </div>
+            `;
+            
+            chartElement.appendChild(infoBox);
+        };
+        
+        createInfoBox();
         
         
         // Handle window resize
