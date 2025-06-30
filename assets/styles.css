@@ -484,70 +484,99 @@ tr:hover {
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-/* Professional Trading Tooltip Styles - Enhanced Z-Index */
+/* Professional Trading Tooltip Styles - Fixed Positioning */
+.metric-card[data-tooltip] {
+    position: relative;
+}
+
 .metric-card[data-tooltip]:hover::before,
 .metric-card[data-tooltip]:hover::after {
     opacity: 1;
     visibility: visible;
-    transform: translateY(0);
+    pointer-events: none;
 }
 
 .metric-card[data-tooltip]::before {
     content: attr(data-tooltip);
     position: fixed;
+    z-index: 99999;
     bottom: auto;
-    top: 50%;
+    top: auto;
     left: 50%;
-    transform: translate(-50%, -50%) translateY(8px);
-    min-width: 320px;
-    max-width: 420px;
-    padding: var(--space-lg);
-    background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
-    color: var(--text-primary);
-    font-size: 0.85rem;
+    transform: translateX(-50%);
+    min-width: 340px;
+    max-width: 480px;
+    padding: var(--space-xl);
+    background: linear-gradient(135deg, #0B1426 0%, #1E293B 100%);
+    color: #F8FAFC;
+    font-size: 0.875rem;
     font-weight: 500;
-    line-height: 1.7;
+    line-height: 1.8;
     text-align: left;
     text-transform: none;
     letter-spacing: normal;
     border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-large), 0 0 40px rgba(0, 212, 163, 0.3);
-    border: 2px solid var(--border-accent);
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.5), 0 0 60px rgba(0, 212, 163, 0.4);
+    border: 2px solid #00D4A3;
     opacity: 0;
     visibility: hidden;
-    transition: var(--transition-normal);
-    z-index: 10000;
-    white-space: pre-line;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    white-space: normal;
     font-family: var(--font-primary);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    pointer-events: none;
+}
+
+/* Position tooltip above card with dynamic positioning */
+.metric-card[data-tooltip]:hover::before {
+    opacity: 1;
+    visibility: visible;
+    bottom: calc(100% + 20px);
+}
+
+/* Fallback for viewport edge detection */
+@supports (top: clamp(0px, 50vh, 100%)) {
+    .metric-card[data-tooltip]::before {
+        top: auto;
+        bottom: clamp(100% + 20px, 50vh, calc(100vh - 40px));
+    }
 }
 
 .metric-card[data-tooltip]::after {
     content: '';
-    position: fixed;
-    bottom: auto;
-    top: calc(50% + 20px);
+    position: absolute;
+    z-index: 99998;
+    bottom: calc(100% + 14px);
     left: 50%;
-    transform: translateX(-50%) translateY(8px);
+    transform: translateX(-50%);
     width: 0;
     height: 0;
     border-left: 12px solid transparent;
     border-right: 12px solid transparent;
-    border-top: 12px solid var(--border-accent);
+    border-top: 12px solid #00D4A3;
     opacity: 0;
     visibility: hidden;
-    transition: var(--transition-normal);
-    z-index: 10001;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    pointer-events: none;
 }
 
-/* Enhanced tooltip hover state */
-.metric-card[data-tooltip]:hover::before {
-    transform: translate(-50%, -50%);
+/* Format tooltip content for better readability */
+.metric-card[data-tooltip]::before {
+    font-feature-settings: 'kern' 1, 'liga' 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
-.metric-card[data-tooltip]:hover::after {
-    transform: translateX(-50%);
+/* Tooltip content formatting via CSS */
+.metric-card[data-tooltip][data-tooltip*="|"]::before {
+    white-space: pre-line;
+}
+
+/* Replace | with line breaks visually */
+.metric-card[data-tooltip]::before {
+    content: attr(data-tooltip);
+    display: block;
 }
 
 /* Enhanced mobile tooltip positioning */
@@ -555,14 +584,21 @@ tr:hover {
     .metric-card[data-tooltip]::before {
         position: fixed;
         bottom: auto;
-        top: 50%;
+        top: 10vh;
         left: 50%;
-        transform: translate(-50%, -50%);
+        transform: translateX(-50%);
         max-width: 90vw;
-        min-width: 280px;
-        z-index: 10000;
+        min-width: 300px;
+        z-index: 99999;
         font-size: 0.9rem;
         padding: var(--space-xl);
+        max-height: 80vh;
+        overflow-y: auto;
+    }
+    
+    .metric-card[data-tooltip]:hover::before {
+        bottom: auto;
+        top: 10vh;
     }
     
     .metric-card[data-tooltip]::after {
@@ -585,34 +621,38 @@ tr:hover {
 .metrics-grid {
     position: relative;
     overflow: visible;
-    z-index: 100;
+    z-index: 1;
+    padding: var(--space-sm) 0;
 }
 
 /* Ensure metric cards have proper stacking context */
 .metric-card {
     position: relative;
-    z-index: 101;
+    z-index: 1;
 }
 
 .metric-card:hover {
-    z-index: 10002;
+    z-index: 9999;
+    overflow: visible;
 }
 
-/* Remove edge case positioning - using fixed positioning instead */
-.metric-card:first-child[data-tooltip]::before,
-.metric-card:last-child[data-tooltip]::before {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+/* Ensure section doesn't clip tooltips */
+.section {
+    overflow: visible !important;
+    position: relative;
+    z-index: 1;
 }
 
-.metric-card:first-child[data-tooltip]::after,
-.metric-card:last-child[data-tooltip]::after {
-    position: fixed;
-    top: calc(50% + 20px);
-    left: 50%;
-    transform: translateX(-50%);
+/* Container overflow handling */
+.container {
+    overflow: visible !important;
+}
+
+/* Ensure proper stacking for all metric types */
+.metrics-grid h3,
+.metrics-grid h4 {
+    position: relative;
+    z-index: 2;
 }
 
 /* Professional Trading Signal & Risk Cards */
@@ -1328,77 +1368,70 @@ tr:hover {
     position: relative;
     overflow: visible !important;
     min-height: 700px;
-    display: flex;
-    flex-direction: column;
-    background: var(--bg-primary) !important;
-    border-radius: var(--radius-lg);
-    border: 2px solid var(--border-accent);
-    box-shadow: var(--shadow-large), 0 0 30px rgba(0, 212, 163, 0.15);
+    display: block;
     margin: var(--space-xl) auto;
-    padding: var(--space-lg);
     max-width: 100%;
     z-index: 1;
 }
 
-#chart::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
-    z-index: 2;
-    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-}
-
-/* Ensure TradingView chart container has proper dark theme */
-#chart > div {
-    flex: 1;
+/* Chart library container gets styled by chart_layout.py - avoid conflicts */
+#chart > div:first-child {
     overflow: visible !important;
-    border-radius: var(--radius-md);
-    background: var(--bg-primary) !important;
-    min-height: 650px;
 }
 
 /* Override TradingView default styles for dark theme */
 #chart canvas {
-    background: var(--bg-primary) !important;
-    border-radius: var(--radius-md);
+    background: transparent !important;
 }
 
-#chart .tv-lightweight-charts {
-    background: var(--bg-primary) !important;
-    border-radius: var(--radius-md);
+/* TradingView specific overrides for dark theme */
+.tv-lightweight-charts {
+    background: transparent !important;
 }
 
-/* Ensure time axis is visible and properly styled */
-#chart .tv-lightweight-charts table {
-    background: var(--bg-primary) !important;
-    color: var(--text-primary) !important;
-}
-
-#chart .tv-lightweight-charts td {
-    background: var(--bg-primary) !important;
+/* Ensure time axis labels are visible */
+.tv-lightweight-charts .time-axis-widget {
     color: var(--text-secondary) !important;
-    border-color: var(--border-primary) !important;
+    fill: var(--text-secondary) !important;
 }
 
-/* Price and time labels styling */
-#chart .tv-lightweight-charts .pane {
-    background: var(--bg-primary) !important;
-}
-
-#chart .tv-lightweight-charts .time-axis {
-    background: var(--bg-primary) !important;
+/* Ensure price axis labels are visible */
+.tv-lightweight-charts .price-axis-widget {
     color: var(--text-secondary) !important;
-    border-top: 1px solid var(--border-primary) !important;
+    fill: var(--text-secondary) !important;
 }
 
-#chart .tv-lightweight-charts .price-axis {
-    background: var(--bg-primary) !important;
+/* Grid lines should be subtle */
+.tv-lightweight-charts .grid-line {
+    stroke: var(--border-primary) !important;
+}
+
+/* Crosshair styling */
+.tv-lightweight-charts .crosshair-horizontal,
+.tv-lightweight-charts .crosshair-vertical {
+    background: var(--text-muted) !important;
+}
+
+/* Time axis specific fixes */
+#chart [class*="time-axis"] {
     color: var(--text-secondary) !important;
-    border-left: 1px solid var(--border-primary) !important;
+    fill: var(--text-secondary) !important;
+}
+
+/* Price axis specific fixes */
+#chart [class*="price-axis"] {
+    color: var(--text-secondary) !important;
+    fill: var(--text-secondary) !important;
+}
+
+/* Ensure all text in chart is visible */
+#chart text {
+    fill: var(--text-secondary) !important;
+}
+
+/* Chart area series overlays */
+.tv-lightweight-charts .area-series {
+    pointer-events: none;
 }
 
 /* Professional Chart Error Styles */
