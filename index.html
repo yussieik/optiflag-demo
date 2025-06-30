@@ -88,13 +88,10 @@
             } else {
                 // Show final metrics
                 showFinalMetrics();
-                // Redirect after a brief pause
+                // Show the completion button after a brief pause
                 setTimeout(() => {
-                    document.getElementById('intro-container').classList.add('fade-out');
-                    setTimeout(() => {
-                        window.location.href = 'main.html';
-                    }, 500);
-                }, 1500);
+                    showCompletionButton();
+                }, 1000);
             }
         }
         
@@ -118,6 +115,24 @@
             document.getElementById('optimization-score').textContent = avgScore.toFixed(3);
             document.getElementById('win-rate').textContent = avgWinRate.toFixed(1) + '%';
             metricsContainer.classList.add('highlight-final');
+        }
+        
+        function showCompletionButton() {
+            const buttonContainer = document.getElementById('completion-button-container');
+            buttonContainer.style.display = 'flex';
+            buttonContainer.style.opacity = '0';
+            
+            // Fade in the button
+            setTimeout(() => {
+                buttonContainer.style.opacity = '1';
+            }, 50);
+        }
+        
+        function navigateToResults() {
+            document.getElementById('intro-container').classList.add('fade-out');
+            setTimeout(() => {
+                window.location.href = 'main.html';
+            }, 500);
         }
         
         function showExperiment(experiment) {
@@ -193,6 +208,14 @@
             
             <div class="discovery-note">
                 <p>Discovering optimal trading parameters through Bayesian optimization...</p>
+            </div>
+            
+            <div id="completion-button-container" class="completion-button-container">
+                <button onclick="navigateToResults()" class="view-results-btn">
+                    View Full Results
+                    <span class="btn-arrow">→</span>
+                </button>
+                <p class="completion-message">Optimization complete! Click to explore detailed analysis.</p>
             </div>
         </div>
     </div>
