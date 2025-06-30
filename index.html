@@ -65,6 +65,7 @@
         let candidatePoints = [];
         let currentBestMinima = null;
         let explorationProbes = [];
+        let discoveredMinimas = [];  // Track minimas discovered by experiments
         
         // Physics ball properties
         let ball = {
@@ -79,30 +80,39 @@
             trail: [],  // trail positions
             stuckCounter: 0,  // counter to detect when ball is stuck
             lastX: 0,  // track last X position
-            escapeBoost: 6,  // upward boost to escape holes
+            escapeBoost: 3,  // reduced upward boost for more horizontal movement
+            horizontalBoost: 4,  // horizontal boost when escaping
             onSurface: false  // track if ball is on the surface
         };
         
         // Generate realistic stock price data with volatility
         function generateStockData() {
             stockPriceData = [];
-            let price = 100;
+            let price = 80 + Math.random() * 40;  // Random starting price between 80-120
             let trend = 0;
             
+            // Randomize trend change points
+            const trendPoints = [
+                Math.floor(30 + Math.random() * 20),   // 30-50
+                Math.floor(70 + Math.random() * 20),   // 70-90
+                Math.floor(110 + Math.random() * 20),  // 110-130
+                Math.floor(150 + Math.random() * 20)   // 150-170
+            ];
+            
             for (let i = 0; i < 200; i++) {
-                // Add trend changes at certain points
-                if (i === 40) trend = -0.3;  // Downtrend
-                if (i === 80) trend = 0.1;   // Slight uptrend
-                if (i === 120) trend = -0.5; // Sharp downtrend
-                if (i === 160) trend = 0.2;  // Recovery
+                // Add randomized trend changes at certain points
+                if (i === trendPoints[0]) trend = -0.2 - Math.random() * 0.3;  // Random downtrend
+                if (i === trendPoints[1]) trend = -0.1 + Math.random() * 0.3;  // Random trend
+                if (i === trendPoints[2]) trend = -0.3 - Math.random() * 0.3;  // Random sharp trend
+                if (i === trendPoints[3]) trend = 0.1 + Math.random() * 0.2;   // Random recovery
                 
                 // Random walk with trend
-                const randomWalk = (Math.random() - 0.5) * 2;
+                const randomWalk = (Math.random() - 0.5) * 2.5;
                 price += trend + randomWalk;
                 
-                // Add some volatility spikes
-                if (Math.random() < 0.1) {
-                    price += (Math.random() - 0.5) * 5;
+                // Add random volatility spikes
+                if (Math.random() < 0.12) {
+                    price += (Math.random() - 0.5) * 7;
                 }
                 
                 stockPriceData.push({
@@ -213,8 +223,10 @@
                 
                 // If stuck in a local minima for too long, jump out
                 if (ball.stuckCounter > 40 && isLocalMinima) {
-                    ball.vy = -ball.escapeBoost;  // Jump upward
-                    ball.vx = (Math.random() - 0.5) * 2 + Math.sign(Math.random() - 0.5) * 1;  // Directional bias
+                    ball.vy = -ball.escapeBoost;  // Reduced upward jump
+                    // Strong horizontal boost in a random direction
+                    const direction = Math.random() > 0.5 ? 1 : -1;
+                    ball.vx = direction * ball.horizontalBoost + (Math.random() - 0.5) * 2;
                     ball.stuckCounter = 0;
                     ball.onSurface = false;
                 }
@@ -349,35 +361,54 @@
             });
             ctx.setLineDash([]);
             
-            // Draw detected minima
-            candidatePoints.filter(c => c.isMinima).forEach(minima => {
-                const x = minima.x * xScale;
+            // Draw discovered minimas from experiments
+            discoveredMinimas.forEach((minima, index) => {
+                const x = minima.x * (vizContext.width / stockPriceData.length);
                 
-                // Draw subtle vertical line
-                ctx.strokeStyle = 'rgba(46, 125, 50, 0.5)';
-                ctx.lineWidth = 1;
+                // Create a colorful gradient for discovered minima
+                const gradient = ctx.createRadialGradient(x, minima.y, 0, x, minima.y, 40);
+                const hue = (index * 72) % 360;  // Different color for each minima
+                gradient.addColorStop(0, `hsla(${hue}, 70%, 50%, 0.4)`);
+                gradient.addColorStop(0.5, `hsla(${hue}, 70%, 50%, 0.2)`);
+                gradient.addColorStop(1, `hsla(${hue}, 70%, 50%, 0)`);
+                
+                ctx.fillStyle = gradient;
+                ctx.fillRect(x - 40, 0, 80, vizContext.height);
+                
+                // Draw vertical indicator line
+                ctx.strokeStyle = `hsla(${hue}, 70%, 50%, 0.6)`;
+                ctx.lineWidth = 2;
                 ctx.beginPath();
-                ctx.moveTo(x, minima.y - 10);
-                ctx.lineTo(x, minima.y + 10);
+                ctx.moveTo(x, minima.y - 15);
+                ctx.lineTo(x, minima.y + 15);
                 ctx.stroke();
                 
-                // Draw small professional circle at minima
-                const pulseSize = 4 + Math.sin(Date.now() / 300) * 1;
+                // Draw the minima point with animation
+                const pulseSize = 5 + Math.sin(Date.now() / 300 + index) * 2;
                 
-                // Subtle outer glow
+                // Outer glow
                 ctx.beginPath();
-                ctx.arc(x, minima.y, pulseSize + 4, 0, Math.PI * 2);
-                ctx.fillStyle = 'rgba(46, 125, 50, 0.1)';
+                ctx.arc(x, minima.y, pulseSize + 5, 0, Math.PI * 2);
+                ctx.fillStyle = `hsla(${hue}, 70%, 50%, 0.2)`;
                 ctx.fill();
                 
-                // Main circle - smaller and more professional
+                // Main circle with color
                 ctx.beginPath();
-                ctx.arc(x, minima.y, 4, 0, Math.PI * 2);
-                ctx.fillStyle = '#2E7D32'; // Forest green
+                ctx.arc(x, minima.y, 5, 0, Math.PI * 2);
+                const minimaGradient = ctx.createRadialGradient(x - 2, minima.y - 2, 0, x, minima.y, 5);
+                minimaGradient.addColorStop(0, `hsla(${hue}, 70%, 60%, 1)`);
+                minimaGradient.addColorStop(1, `hsla(${hue}, 70%, 40%, 1)`);
+                ctx.fillStyle = minimaGradient;
                 ctx.fill();
-                ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
-                ctx.lineWidth = 1;
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
+                ctx.lineWidth = 1.5;
                 ctx.stroke();
+                
+                // Add experiment number label
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+                ctx.font = 'bold 10px Inter';
+                ctx.textAlign = 'center';
+                ctx.fillText(`#${index + 1}`, x, minima.y - 20);
             });
             
             // Draw current best minima if found
@@ -552,6 +583,42 @@
         }
         createParticles();
         
+        // Function to find and add a random minima when experiment is discovered
+        function findAndAddRandomMinima() {
+            // Find local minimas in the stock data
+            const minimas = [];
+            for (let i = 10; i < stockPriceData.length - 10; i++) {
+                const current = stockPriceData[i];
+                let isMinima = true;
+                
+                // Check if it's lower than surrounding points
+                for (let j = -5; j <= 5; j++) {
+                    if (j !== 0 && stockPriceData[i + j].price < current.price) {
+                        isMinima = false;
+                        break;
+                    }
+                }
+                
+                if (isMinima) {
+                    minimas.push({
+                        x: i,
+                        y: current.normalized,
+                        price: current.price
+                    });
+                }
+            }
+            
+            // Pick a random minima that hasn't been discovered yet
+            const undiscoveredMinimas = minimas.filter(m => 
+                !discoveredMinimas.some(d => Math.abs(d.x - m.x) < 10)
+            );
+            
+            if (undiscoveredMinimas.length > 0) {
+                const randomMinima = undiscoveredMinimas[Math.floor(Math.random() * undiscoveredMinimas.length)];
+                discoveredMinimas.push(randomMinima);
+            }
+        }
+        
         // Animate optimization process
         function animateStep() {
             if (currentStep < steps.length) {
@@ -611,6 +678,9 @@
             expDiv.style.animationDelay = `${existingExperiments * 0.1}s`;
             
             experimentList.appendChild(expDiv);
+            
+            // Find a random local minima in the stock data and add it to discovered minimas
+            findAndAddRandomMinima();
         }
         
         // Continuous animation loop for the visualization
