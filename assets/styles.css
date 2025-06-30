@@ -1699,7 +1699,7 @@ tr:hover {
     position: relative;
     display: flex;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: flex-end;
     width: 40px;
     height: 40px;
     padding: 0 12px;
@@ -1713,6 +1713,7 @@ tr:hover {
     -webkit-backdrop-filter: blur(10px);
     overflow: hidden;
     white-space: nowrap;
+    margin-left: auto;
 }
 
 .experiment-nav .nav-link:hover {
@@ -1720,7 +1721,8 @@ tr:hover {
     background: rgba(0, 212, 163, 0.15);
     border-color: var(--accent-primary);
     color: var(--accent-primary);
-    padding-right: 20px;
+    padding-left: 20px;
+    transform: translateX(-60px);
 }
 
 .experiment-nav .nav-link svg {
@@ -1729,15 +1731,17 @@ tr:hover {
     min-width: 16px;
     stroke-width: 2;
     transition: all 0.3s ease;
+    order: 2;
 }
 
 .experiment-nav .nav-link .nav-text {
     font-size: 0.75rem;
     font-weight: 600;
-    margin-left: 8px;
+    margin-right: 8px;
     opacity: 0;
-    transform: translateX(-10px);
+    transform: translateX(10px);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    order: 1;
 }
 
 .experiment-nav .nav-link:hover .nav-text {
@@ -1756,6 +1760,16 @@ tr:hover {
     stroke: var(--accent-primary);
 }
 
+/* Prevent hover flickering */
+.experiment-nav.nav-hovering .nav-link {
+    transition-delay: 0s;
+}
+
+/* Ensure smooth expansion without text cutoff */
+.experiment-nav .nav-link:hover {
+    min-width: 120px;
+}
+
 /* Remove inner wrapper as we don't need it */
 .experiment-nav-inner {
     display: contents;
@@ -1770,6 +1784,10 @@ tr:hover {
     .experiment-nav .nav-link {
         width: 36px;
         height: 36px;
+    }
+    
+    .experiment-nav .nav-link:hover {
+        transform: translateX(-50px);
     }
 }
 

@@ -58,6 +58,46 @@
             });
         });
         
+        // Enhanced navigation hover handling
+        const experimentNav = document.querySelector('.experiment-nav');
+        if (experimentNav) {
+            // Add a wrapper to prevent hover glitches
+            experimentNav.addEventListener('mouseenter', function() {
+                this.classList.add('nav-hovering');
+            });
+            
+            experimentNav.addEventListener('mouseleave', function() {
+                this.classList.remove('nav-hovering');
+            });
+            
+            // Highlight active section based on scroll position
+            const sections = document.querySelectorAll('.section');
+            const observerOptions = {
+                root: null,
+                rootMargin: '-30% 0px -50% 0px',
+                threshold: 0
+            };
+            
+            const sectionObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.id;
+                        navLinks.forEach(link => {
+                            if (link.getAttribute('href') === `#${id}`) {
+                                link.classList.add('active');
+                            } else {
+                                link.classList.remove('active');
+                            }
+                        });
+                    }
+                });
+            }, observerOptions);
+            
+            sections.forEach(section => {
+                sectionObserver.observe(section);
+            });
+        }
+        
         // Enhanced tooltip handling to prevent glitches
         const tooltipCards = document.querySelectorAll('.metric-card[data-tooltip]');
         let tooltipTimeout;
