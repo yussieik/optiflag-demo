@@ -41,8 +41,8 @@
         const experimentList = document.getElementById('experiment-list');
         const experimentsDiscovered = document.getElementById('experiments-discovered');
         
-        // Initialize optimization landscape visualization
-        function initializeOptimizationViz() {
+        // Initialize stock market optimization visualization
+        function initializeStockOptimizationViz() {
             const canvas = document.createElement('canvas');
             canvas.id = 'optimization-canvas';
             canvas.width = patternViz.offsetWidth || 800;
@@ -50,150 +50,241 @@
             patternViz.appendChild(canvas);
             
             const ctx = canvas.getContext('2d');
-            
-            // Create gradient background
-            const bgGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-            bgGradient.addColorStop(0, 'rgba(0, 212, 163, 0.05)');
-            bgGradient.addColorStop(1, 'rgba(14, 165, 233, 0.05)');
-            ctx.fillStyle = bgGradient;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
             return { canvas, ctx };
         }
         
-        const vizContext = initializeOptimizationViz();
-        let optimizationPath = [];
-        let particles = [];
+        const vizContext = initializeStockOptimizationViz();
+        let stockPriceData = [];
+        let candidatePoints = [];
+        let currentBestMinima = null;
+        let explorationProbes = [];
         
-        // Create optimization landscape with peaks and valleys
-        function drawOptimizationLandscape(ctx, canvas, progress) {
+        // Generate realistic stock price data with volatility
+        function generateStockData() {
+            stockPriceData = [];
+            let price = 100;
+            let trend = 0;
+            
+            for (let i = 0; i < 200; i++) {
+                // Add trend changes at certain points
+                if (i === 40) trend = -0.3;  // Downtrend
+                if (i === 80) trend = 0.1;   // Slight uptrend
+                if (i === 120) trend = -0.5; // Sharp downtrend
+                if (i === 160) trend = 0.2;  // Recovery
+                
+                // Random walk with trend
+                const randomWalk = (Math.random() - 0.5) * 2;
+                price += trend + randomWalk;
+                
+                // Add some volatility spikes
+                if (Math.random() < 0.1) {
+                    price += (Math.random() - 0.5) * 5;
+                }
+                
+                stockPriceData.push({
+                    x: i,
+                    price: price,
+                    normalized: price // Will be normalized later
+                });
+            }
+            
+            // Normalize prices to fit canvas
+            const minPrice = Math.min(...stockPriceData.map(d => d.price));
+            const maxPrice = Math.max(...stockPriceData.map(d => d.price));
+            const priceRange = maxPrice - minPrice;
+            
+            stockPriceData.forEach(point => {
+                point.normalized = 180 - ((point.price - minPrice) / priceRange) * 160 + 10;
+            });
+        }
+        
+        generateStockData();
+        
+        // Draw stock market data and optimization process
+        function drawStockOptimization(ctx, canvas, progress) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            // Background gradient
+            // Dark background
             const bgGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-            bgGradient.addColorStop(0, 'rgba(0, 212, 163, 0.05)');
-            bgGradient.addColorStop(1, 'rgba(14, 165, 233, 0.05)');
+            bgGradient.addColorStop(0, 'rgba(11, 20, 38, 0.95)');
+            bgGradient.addColorStop(1, 'rgba(30, 41, 59, 0.95)');
             ctx.fillStyle = bgGradient;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            // Draw grid lines
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+            // Draw grid
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
             ctx.lineWidth = 1;
-            for (let i = 0; i < 10; i++) {
-                const x = (canvas.width / 10) * i;
+            for (let i = 0; i <= 10; i++) {
+                const y = (canvas.height / 10) * i;
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+            
+            // Draw stock price line
+            ctx.strokeStyle = 'rgba(100, 116, 139, 0.8)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            
+            const xScale = canvas.width / stockPriceData.length;
+            stockPriceData.forEach((point, i) => {
+                const x = point.x * xScale;
+                const y = point.normalized;
+                
+                if (i === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            });
+            ctx.stroke();
+            
+            // Highlight explored regions with heat map effect
+            candidatePoints.forEach(candidate => {
+                const x = candidate.x * xScale;
+                const gradient = ctx.createRadialGradient(x, candidate.y, 0, x, candidate.y, 30);
+                
+                if (candidate.isMinima) {
+                    // Green glow for detected minima
+                    gradient.addColorStop(0, 'rgba(0, 212, 163, 0.3)');
+                    gradient.addColorStop(1, 'rgba(0, 212, 163, 0)');
+                } else {
+                    // Blue glow for exploration
+                    gradient.addColorStop(0, 'rgba(14, 165, 233, 0.2)');
+                    gradient.addColorStop(1, 'rgba(14, 165, 233, 0)');
+                }
+                
+                ctx.fillStyle = gradient;
+                ctx.fillRect(x - 30, 0, 60, canvas.height);
+            });
+            
+            // Draw exploration probes (Bayesian acquisition function visualization)
+            ctx.strokeStyle = 'rgba(14, 165, 233, 0.6)';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([2, 2]);
+            
+            explorationProbes.forEach(probe => {
+                const x = probe.x * xScale;
                 ctx.beginPath();
                 ctx.moveTo(x, 0);
                 ctx.lineTo(x, canvas.height);
                 ctx.stroke();
-            }
-            
-            // Draw optimization function landscape
-            ctx.beginPath();
-            ctx.moveTo(0, canvas.height / 2);
-            
-            const points = 100;
-            for (let i = 0; i <= points; i++) {
-                const x = (canvas.width / points) * i;
-                const baseY = canvas.height / 2;
                 
-                // Create multiple peaks representing local optima
-                const peak1 = 30 * Math.exp(-Math.pow((i - 20) / 10, 2));
-                const peak2 = 50 * Math.exp(-Math.pow((i - 50) / 15, 2));
-                const peak3 = 70 * Math.exp(-Math.pow((i - 80) / 12, 2)); // Global optimum
+                // Draw acquisition function value
+                const acquisitionHeight = probe.acquisition * 50;
+                ctx.fillStyle = 'rgba(14, 165, 233, 0.3)';
+                ctx.fillRect(x - 2, canvas.height - acquisitionHeight, 4, acquisitionHeight);
+            });
+            ctx.setLineDash([]);
+            
+            // Draw detected minima
+            candidatePoints.filter(c => c.isMinima).forEach(minima => {
+                const x = minima.x * xScale;
                 
-                const y = baseY - peak1 - peak2 - peak3 + 10 * Math.sin(i / 5);
-                ctx.lineTo(x, y);
-            }
-            
-            // Fill under the curve
-            ctx.lineTo(canvas.width, canvas.height);
-            ctx.lineTo(0, canvas.height);
-            ctx.closePath();
-            
-            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-            gradient.addColorStop(0, 'rgba(0, 212, 163, 0.2)');
-            gradient.addColorStop(1, 'rgba(0, 212, 163, 0.02)');
-            ctx.fillStyle = gradient;
-            ctx.fill();
-            
-            // Draw the optimization path
-            if (optimizationPath.length > 1) {
-                ctx.strokeStyle = '#00D4A3';
+                // Draw vertical line
+                ctx.strokeStyle = 'rgba(0, 212, 163, 0.8)';
                 ctx.lineWidth = 2;
-                ctx.shadowBlur = 10;
-                ctx.shadowColor = '#00D4A3';
-                
                 ctx.beginPath();
-                ctx.moveTo(optimizationPath[0].x, optimizationPath[0].y);
-                
-                for (let i = 1; i < optimizationPath.length; i++) {
-                    const point = optimizationPath[i];
-                    ctx.lineTo(point.x, point.y);
-                }
+                ctx.moveTo(x, minima.y - 20);
+                ctx.lineTo(x, minima.y + 20);
                 ctx.stroke();
                 
-                // Draw current position
-                const currentPoint = optimizationPath[optimizationPath.length - 1];
+                // Draw circle at minima
                 ctx.beginPath();
-                ctx.arc(currentPoint.x, currentPoint.y, 6, 0, Math.PI * 2);
+                ctx.arc(x, minima.y, 8, 0, Math.PI * 2);
                 ctx.fillStyle = '#00D4A3';
                 ctx.fill();
-                ctx.strokeStyle = '#fff';
+                ctx.strokeStyle = '#0B1426';
                 ctx.lineWidth = 2;
                 ctx.stroke();
                 
-                ctx.shadowBlur = 0;
-            }
-            
-            // Draw exploring particles
-            particles.forEach(particle => {
+                // Pulsing effect
+                const pulseSize = 8 + Math.sin(Date.now() / 200) * 3;
                 ctx.beginPath();
-                ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(0, 212, 163, ${particle.opacity})`;
-                ctx.fill();
-                
-                // Update particle position
-                particle.x += particle.vx;
-                particle.y += particle.vy;
-                particle.opacity *= 0.98;
-                particle.size *= 0.99;
+                ctx.arc(x, minima.y, pulseSize, 0, Math.PI * 2);
+                ctx.strokeStyle = 'rgba(0, 212, 163, 0.3)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
             });
             
-            // Remove faded particles
-            particles = particles.filter(p => p.opacity > 0.01);
-            
-            // Add new particles occasionally
-            if (Math.random() < 0.3 && particles.length < 20) {
-                const currentPoint = optimizationPath[optimizationPath.length - 1] || { x: 0, y: canvas.height / 2 };
-                particles.push({
-                    x: currentPoint.x,
-                    y: currentPoint.y,
-                    vx: (Math.random() - 0.5) * 2,
-                    vy: (Math.random() - 0.5) * 2,
-                    size: Math.random() * 3 + 1,
-                    opacity: 0.6
-                });
+            // Draw current best minima if found
+            if (currentBestMinima) {
+                const x = currentBestMinima.x * xScale;
+                
+                // Highlight box
+                ctx.fillStyle = 'rgba(0, 212, 163, 0.1)';
+                ctx.fillRect(x - 20, 0, 40, canvas.height);
+                
+                // Label
+                ctx.fillStyle = '#00D4A3';
+                ctx.font = '11px Inter';
+                ctx.textAlign = 'center';
+                ctx.fillText('OPTIMAL', x, currentBestMinima.y - 15);
             }
+            
+            // Draw legend
+            ctx.font = '10px Inter';
+            ctx.textAlign = 'left';
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+            ctx.fillText('Price History', 10, 20);
+            
+            ctx.fillStyle = 'rgba(14, 165, 233, 0.8)';
+            ctx.fillText('• Exploration', 10, 35);
+            
+            ctx.fillStyle = 'rgba(0, 212, 163, 0.8)';
+            ctx.fillText('• Local Minima', 10, 50);
         }
         
-        // Update optimization path based on progress
-        function updateOptimizationPath(progress) {
-            const canvas = vizContext.canvas;
-            const x = (canvas.width / 100) * progress;
+        // Update optimization based on progress
+        function updateStockOptimization(progress) {
+            const dataIndex = Math.floor((progress / 100) * stockPriceData.length);
             
-            // Calculate y position on the landscape
-            const baseY = canvas.height / 2;
-            const i = progress;
-            const peak1 = 30 * Math.exp(-Math.pow((i - 20) / 10, 2));
-            const peak2 = 50 * Math.exp(-Math.pow((i - 50) / 15, 2));
-            const peak3 = 70 * Math.exp(-Math.pow((i - 80) / 12, 2));
-            const y = baseY - peak1 - peak2 - peak3 + 10 * Math.sin(i / 5);
+            // Simulate Bayesian optimization exploration
+            if (progress > 10 && Math.random() < 0.3) {
+                // Add exploration probe
+                const probeIndex = Math.floor(Math.random() * dataIndex);
+                explorationProbes.push({
+                    x: probeIndex,
+                    acquisition: Math.random()
+                });
+                
+                // Keep only recent probes
+                if (explorationProbes.length > 10) {
+                    explorationProbes.shift();
+                }
+            }
             
-            optimizationPath.push({ x, y });
+            // Detect local minima in explored region
+            if (progress > 20 && Math.random() < 0.2) {
+                const checkIndex = Math.floor(Math.random() * dataIndex);
+                const point = stockPriceData[checkIndex];
+                
+                // Check if it's a local minimum (simplified)
+                const isLocalMin = checkIndex > 5 && checkIndex < stockPriceData.length - 5 &&
+                    stockPriceData.slice(checkIndex - 5, checkIndex + 5)
+                        .every(p => p.price >= point.price - 0.5);
+                
+                if (isLocalMin || Math.random() < 0.1) {
+                    const candidate = {
+                        x: checkIndex,
+                        y: point.normalized,
+                        price: point.price,
+                        isMinima: isLocalMin
+                    };
+                    
+                    candidatePoints.push(candidate);
+                    
+                    // Update best minima
+                    if (isLocalMin && (!currentBestMinima || point.price < currentBestMinima.price)) {
+                        currentBestMinima = candidate;
+                    }
+                }
+            }
             
-            // Keep only recent points for performance
-            if (optimizationPath.length > 100) {
-                optimizationPath.shift();
+            // Keep reasonable number of candidates
+            if (candidatePoints.length > 15) {
+                candidatePoints = candidatePoints.slice(-15);
             }
         }
         
@@ -228,9 +319,9 @@
                     showExperiment(experiments[step.showExperiment]);
                 }
                 
-                // Update optimization visualization
-                updateOptimizationPath(step.progress);
-                drawOptimizationLandscape(vizContext.ctx, vizContext.canvas, step.progress);
+                // Update stock optimization visualization
+                updateStockOptimization(step.progress);
+                drawStockOptimization(vizContext.ctx, vizContext.canvas, step.progress);
                 
                 currentStep++;
                 setTimeout(animateStep, 600);
@@ -304,7 +395,7 @@
         // Continuous animation loop for the visualization
         function animateVisualization() {
             if (vizContext && vizContext.ctx && vizContext.canvas) {
-                drawOptimizationLandscape(vizContext.ctx, vizContext.canvas, (currentStep / steps.length) * 100);
+                drawStockOptimization(vizContext.ctx, vizContext.canvas, (currentStep / steps.length) * 100);
                 requestAnimationFrame(animateVisualization);
             }
         }
@@ -329,7 +420,7 @@
             </div>
             
             <div class="pattern-visualization" id="pattern-viz">
-                <div class="viz-title">Optimization Landscape Explorer</div>
+                <div class="viz-title">Bayesian Search for Market Minima</div>
             </div>
             
             <div class="progress-container">
