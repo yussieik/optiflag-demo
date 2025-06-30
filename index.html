@@ -670,7 +670,25 @@
             arrow.onclick = () => {
                 document.getElementById('completion-button-container').scrollIntoView({ behavior: 'smooth', block: 'center' });
             };
-            document.getElementById('optimization-container').appendChild(arrow);
+            document.body.appendChild(arrow); // Append to body for fixed positioning
+            
+            // Hide arrow when scrolled to bottom
+            const checkScroll = () => {
+                const scrollHeight = document.documentElement.scrollHeight;
+                const clientHeight = document.documentElement.clientHeight;
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                
+                if (scrollTop + clientHeight >= scrollHeight - 100) {
+                    arrow.style.opacity = '0';
+                    arrow.style.pointerEvents = 'none';
+                } else {
+                    arrow.style.opacity = '1';
+                    arrow.style.pointerEvents = 'auto';
+                }
+            };
+            
+            window.addEventListener('scroll', checkScroll);
+            checkScroll();
         }
         
         function showExperiment(experiment) {

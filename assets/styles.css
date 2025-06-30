@@ -490,19 +490,21 @@ tr:hover {
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-/* Professional Trading Tooltip Styles - Fixed Positioning */
+/* Professional Trading Tooltip Styles - Fixed Positioning with Improved Hover */
 .metric-card[data-tooltip] {
     position: relative;
 }
 
-.metric-card[data-tooltip]:hover::before,
-.metric-card[data-tooltip]:hover::after {
-    opacity: 1;
-    visibility: visible;
+/* Tooltip trigger area - prevents glitches */
+.metric-card[data-tooltip]::after {
+    content: '';
+    position: absolute;
+    inset: -10px; /* Extend hover area slightly beyond card */
+    z-index: 1;
     pointer-events: none;
-    animation: none;  /* Disable animation on hover to prevent glitches */
 }
 
+/* Tooltip content */
 .metric-card[data-tooltip]::before {
     content: attr(data-tooltip);
     position: fixed;
@@ -510,7 +512,7 @@ tr:hover {
     bottom: auto;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%) scale(0.95);
     width: 480px;
     max-width: 90vw;
     min-height: fit-content;
@@ -530,7 +532,7 @@ tr:hover {
     border: 2px solid #00D4A3;
     opacity: 0;
     visibility: hidden;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);  /* Smooth easing function */
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0s linear 0.2s;
     white-space: pre-wrap;
     word-break: normal;
     overflow-wrap: break-word;
@@ -546,31 +548,24 @@ tr:hover {
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: #00D4A3 transparent;
-    will-change: transform, opacity;  /* Optimize for animations */
 }
 
-/* Show tooltip on hover with proper stacking */
-.metric-card[data-tooltip]:hover::before {
+/* Show tooltip on hover with delay to prevent glitches */
+.metric-card[data-tooltip]:hover::before,
+.metric-card[data-tooltip].tooltip-active::before {
     opacity: 1;
     visibility: visible;
     transform: translate(-50%, -50%) scale(1);
+    transition: opacity 0.3s ease 0.2s, transform 0.3s ease 0.2s, visibility 0s linear 0.2s;
 }
 
-/* Tooltip fade in animation */
-@keyframes tooltipFadeIn {
-    from {
-        opacity: 0;
-        transform: translate(-50%, -50%) scale(0.95);
-    }
-    to {
-        opacity: 1;
-        transform: translate(-50%, -50%) scale(1);
-    }
+/* Quick hide when leaving to prevent overlap */
+.metric-card[data-tooltip]:not(:hover)::before {
+    transition: opacity 0.15s ease, transform 0.15s ease, visibility 0s linear 0.15s;
 }
 
-/* Add backdrop overlay when tooltip is shown */
-.metric-card[data-tooltip]:hover::after {
-    content: '';
+/* Backdrop overlay for tooltip */
+.tooltip-backdrop {
     position: fixed;
     top: 0;
     left: 0;
@@ -579,20 +574,34 @@ tr:hover {
     background: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(3px);
     -webkit-backdrop-filter: blur(3px);
-    z-index: 999998; /* One less than tooltip */
-    opacity: 1;
-    visibility: visible;
+    z-index: 999998;
+    opacity: 0;
+    visibility: hidden;
     pointer-events: none;
-    display: block;
-    animation: backdropFadeIn 0.2s ease;
+    transition: opacity 0.2s ease, visibility 0s linear 0.2s;
 }
 
-@keyframes backdropFadeIn {
-    from {
-        opacity: 0;
+/* Show backdrop when any tooltip is hovered */
+.metric-card[data-tooltip]:hover ~ .tooltip-backdrop,
+.tooltip-backdrop.active {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.2s ease;
+}
+
+/* Add JavaScript-controlled tooltip for better stability */
+@media (hover: hover) and (pointer: fine) {
+    /* Only apply hover tooltips on devices with precise pointing */
+    .metric-card[data-tooltip] {
+        cursor: help;
     }
-    to {
-        opacity: 1;
+}
+
+/* Touch device tooltip handling */
+@media (hover: none) and (pointer: coarse) {
+    .metric-card[data-tooltip]::before,
+    .metric-card[data-tooltip]::after {
+        display: none;
     }
 }
 
@@ -623,7 +632,7 @@ tr:hover {
 }
 
 
-/* Tooltip backdrop is handled by ::after pseudo-element above */
+/* Tooltip styles complete */
 
 /* Format tooltip content for better readability */
 .metric-card[data-tooltip]::before {
@@ -1672,6 +1681,149 @@ tr:hover {
         flex-direction: column;
         gap: var(--space-md);
     }
+}
+
+/* Minimalistic Right-Side Navigation for Experiment Pages */
+.experiment-nav {
+    position: fixed;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.experiment-nav .nav-link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: rgba(30, 41, 59, 0.8);
+    border: 1px solid rgba(100, 116, 139, 0.3);
+    border-radius: 50%;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.experiment-nav .nav-link:hover {
+    background: rgba(0, 212, 163, 0.15);
+    border-color: var(--accent-primary);
+    color: var(--accent-primary);
+    transform: scale(1.1);
+}
+
+.experiment-nav .nav-link svg {
+    width: 18px;
+    height: 18px;
+    stroke-width: 2;
+    transition: inherit;
+}
+
+/* Tooltip for nav links */
+.experiment-nav .nav-link::before {
+    content: attr(data-label);
+    position: absolute;
+    right: 50px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(30, 41, 59, 0.95);
+    color: var(--text-primary);
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+    pointer-events: none;
+    border: 1px solid rgba(100, 116, 139, 0.3);
+}
+
+.experiment-nav .nav-link:hover::before {
+    opacity: 1;
+    visibility: visible;
+    right: 55px;
+}
+
+/* Active state */
+.experiment-nav .nav-link.active {
+    background: rgba(0, 212, 163, 0.2);
+    border-color: var(--accent-primary);
+    color: var(--accent-primary);
+}
+
+/* Remove inner wrapper as we don't need it */
+.experiment-nav-inner {
+    display: contents;
+}
+
+/* Scroll Arrow - Animated Down Arrow */
+.scroll-arrow {
+    position: fixed;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    cursor: pointer;
+    z-index: 90;
+    animation: bounceDown 2s ease-in-out infinite;
+    transition: opacity 0.3s ease;
+}
+
+.scroll-arrow:hover {
+    opacity: 0.8;
+    animation-play-state: paused;
+}
+
+.scroll-arrow svg {
+    filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
+}
+
+.scroll-arrow svg circle {
+    fill: rgba(11, 20, 38, 0.9);
+    transition: var(--transition-normal);
+}
+
+.scroll-arrow:hover svg circle {
+    stroke: var(--accent-primary);
+    fill: rgba(0, 212, 163, 0.1);
+}
+
+.scroll-arrow svg path {
+    transition: var(--transition-normal);
+}
+
+.scroll-arrow:hover svg path {
+    stroke: var(--accent-primary);
+}
+
+@keyframes bounceDown {
+    0%, 100% {
+        transform: translateX(-50%) translateY(0);
+    }
+    50% {
+        transform: translateX(-50%) translateY(10px);
+    }
+}
+
+/* Hide scroll arrow when near bottom or on small screens */
+@media (max-height: 900px) {
+    .scroll-arrow {
+        display: none;
+    }
+}
+
+/* Ensure scroll arrow is visible */
+.scroll-arrow {
+    opacity: 1;
+    pointer-events: auto;
 }
 
 /* Professional Trading Navigation */

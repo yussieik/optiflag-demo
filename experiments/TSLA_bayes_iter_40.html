@@ -57,6 +57,25 @@
                 }
             });
         });
+        
+        // Enhanced tooltip handling to prevent glitches
+        const tooltipCards = document.querySelectorAll('.metric-card[data-tooltip]');
+        let tooltipTimeout;
+        
+        tooltipCards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                clearTimeout(tooltipTimeout);
+                // Add a small delay to prevent accidental hovers
+                tooltipTimeout = setTimeout(() => {
+                    card.classList.add('tooltip-active');
+                }, 100);
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                clearTimeout(tooltipTimeout);
+                card.classList.remove('tooltip-active');
+            });
+        });
     });
     </script>
 </head>
