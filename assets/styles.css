@@ -439,7 +439,7 @@ tr:hover {
     transition: var(--transition-normal);
     position: relative;
     cursor: help;
-    overflow: hidden;
+    overflow: visible;
 }
 
 .metric-card::before {
@@ -498,91 +498,101 @@ tr:hover {
 
 .metric-card[data-tooltip]::before {
     content: attr(data-tooltip);
-    position: absolute;
-    z-index: 99999;
-    bottom: calc(100% + 20px);
+    position: fixed;
+    z-index: 999999;
+    bottom: auto;
+    top: 50%;
     left: 50%;
-    transform: translateX(-50%);
-    width: 380px;
-    min-height: auto;
-    height: auto;
-    padding: 24px 28px;
+    transform: translate(-50%, -50%);
+    width: 420px;
+    max-width: 90vw;
+    min-height: fit-content;
+    height: fit-content;
+    max-height: 80vh;
+    padding: 32px 36px;
     background: linear-gradient(135deg, #0B1426 0%, #1E293B 100%);
     color: #F8FAFC;
-    font-size: 0.875rem;
+    font-size: 0.9375rem;
     font-weight: 500;
-    line-height: 1.8;
+    line-height: 2;
     text-align: left;
     text-transform: none;
-    letter-spacing: normal;
+    letter-spacing: 0.02em;
     border-radius: var(--radius-lg);
-    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.5), 0 0 60px rgba(0, 212, 163, 0.4);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 80px rgba(0, 212, 163, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
     border: 2px solid #00D4A3;
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.3s ease, visibility 0.3s ease;
-    white-space: pre-line;
-    word-break: break-word;
-    word-wrap: break-word;
-    font-family: var(--font-primary);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    pointer-events: none;
-    display: block;
-    box-sizing: border-box;
+    white-space: normal;
+    word-break: normal;
     overflow-wrap: break-word;
+    font-family: var(--font-primary);
+    backdrop-filter: blur(30px) saturate(150%);
+    -webkit-backdrop-filter: blur(30px) saturate(150%);
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+    box-sizing: border-box;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #00D4A3 transparent;
 }
 
-/* Position tooltip above card with dynamic positioning */
+/* Show tooltip on hover with proper stacking */
 .metric-card[data-tooltip]:hover::before {
     opacity: 1;
     visibility: visible;
 }
 
-/* Adjust tooltip position based on card position in grid */
+/* Add backdrop overlay when tooltip is shown */
+.metric-card[data-tooltip]:hover::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    z-index: 999998;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: none;
+    display: block;
+}
+
+/* Custom scrollbar for tooltip */
+.metric-card[data-tooltip]::before::-webkit-scrollbar {
+    width: 6px;
+}
+
+.metric-card[data-tooltip]::before::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+}
+
+.metric-card[data-tooltip]::before::-webkit-scrollbar-thumb {
+    background: #00D4A3;
+    border-radius: 3px;
+}
+
+.metric-card[data-tooltip]::before::-webkit-scrollbar-thumb:hover {
+    background: #00E5B3;
+}
+
+/* Ensure metrics grid allows overflow */
 .metrics-grid {
     position: relative;
-}
-
-/* For cards in the rightmost column - position tooltip to the left */
-.metrics-grid > .metric-card:nth-child(5n)[data-tooltip]::before,
-.metrics-grid > .metric-card:nth-child(5n-1)[data-tooltip]::before {
-    left: auto;
-    right: 0;
-    transform: translateX(0);
-}
-
-/* For cards in the leftmost column - position tooltip to the right */
-.metrics-grid > .metric-card:nth-child(5n+1)[data-tooltip]::before {
-    left: 0;
-    transform: translateX(0);
-}
-
-/* Center column cards keep centered tooltips */
-.metrics-grid > .metric-card:nth-child(5n+2)[data-tooltip]::before,
-.metrics-grid > .metric-card:nth-child(5n+3)[data-tooltip]::before {
-    left: 50%;
-    transform: translateX(-50%);
+    overflow: visible;
+    z-index: 1;
 }
 
 
-.metric-card[data-tooltip]::after {
-    content: '';
-    position: absolute;
-    z-index: 99998;
-    bottom: calc(100% + 14px);
-    left: 50%;
-    transform: translateX(-50%);
-    width: 0;
-    height: 0;
-    border-left: 12px solid transparent;
-    border-right: 12px solid transparent;
-    border-top: 12px solid #00D4A3;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
-    pointer-events: none;
-}
+/* Tooltip backdrop is handled by ::after pseudo-element above */
 
 /* Format tooltip content for better readability */
 .metric-card[data-tooltip]::before {
@@ -591,30 +601,14 @@ tr:hover {
     -moz-osx-font-smoothing: grayscale;
 }
 
-/* Enhanced mobile tooltip positioning */
+/* Mobile tooltip adjustments */
 @media (max-width: 768px) {
     .metric-card[data-tooltip]::before {
-        position: fixed;
-        bottom: auto;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
         width: 90vw;
-        max-width: 400px;
-        z-index: 99999;
-        font-size: 0.9rem;
-        padding: 20px;
+        max-width: 420px;
+        font-size: 0.875rem;
+        padding: 24px;
         max-height: 70vh;
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
-    }
-    
-    .metric-card[data-tooltip]:hover::before {
-        bottom: auto;
-    }
-    
-    .metric-card[data-tooltip]::after {
-        display: none;
     }
     
     /* Enhanced chart container for mobile */
@@ -644,7 +638,7 @@ tr:hover {
 }
 
 .metric-card:hover {
-    z-index: 9999;
+    z-index: 10;
     overflow: visible;
 }
 
@@ -713,7 +707,7 @@ tr:hover {
     background-color: #f8f9fa;
     border-width: 2px !important;
     position: relative;
-    overflow: hidden;
+    overflow: visible;
 }
 
 .performance-card:hover {
