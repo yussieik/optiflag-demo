@@ -504,12 +504,14 @@ tr:hover {
     left: 50%;
     transform: translateX(-50%);
     width: 380px;
-    padding: 20px 24px;
+    min-height: auto;
+    height: auto;
+    padding: 24px 28px;
     background: linear-gradient(135deg, #0B1426 0%, #1E293B 100%);
     color: #F8FAFC;
     font-size: 0.875rem;
     font-weight: 500;
-    line-height: 1.6;
+    line-height: 1.8;
     text-align: left;
     text-transform: none;
     letter-spacing: normal;
@@ -519,14 +521,16 @@ tr:hover {
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.3s ease, visibility 0.3s ease;
-    white-space: pre-wrap;
+    white-space: pre-line;
     word-break: break-word;
+    word-wrap: break-word;
     font-family: var(--font-primary);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     pointer-events: none;
     display: block;
     box-sizing: border-box;
+    overflow-wrap: break-word;
 }
 
 /* Position tooltip above card with dynamic positioning */
@@ -585,17 +589,6 @@ tr:hover {
     font-feature-settings: 'kern' 1, 'liga' 1;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-}
-
-/* Tooltip content formatting via CSS */
-.metric-card[data-tooltip][data-tooltip*="|"]::before {
-    white-space: pre-line;
-}
-
-/* Replace | with line breaks visually */
-.metric-card[data-tooltip]::before {
-    content: attr(data-tooltip);
-    display: block;
 }
 
 /* Enhanced mobile tooltip positioning */
