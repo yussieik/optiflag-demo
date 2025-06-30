@@ -500,6 +500,7 @@ tr:hover {
     opacity: 1;
     visibility: visible;
     pointer-events: none;
+    animation: none;  /* Disable animation on hover to prevent glitches */
 }
 
 .metric-card[data-tooltip]::before {
@@ -529,7 +530,7 @@ tr:hover {
     border: 2px solid #00D4A3;
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);  /* Smooth easing function */
     white-space: pre-wrap;
     word-break: normal;
     overflow-wrap: break-word;
@@ -545,7 +546,7 @@ tr:hover {
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: #00D4A3 transparent;
-    animation: tooltipFadeIn 0.3s ease;
+    will-change: transform, opacity;  /* Optimize for animations */
 }
 
 /* Show tooltip on hover with proper stacking */

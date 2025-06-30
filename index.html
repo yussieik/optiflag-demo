@@ -365,18 +365,17 @@
             discoveredMinimas.forEach((minima, index) => {
                 const x = minima.x * (vizContext.width / stockPriceData.length);
                 
-                // Create a colorful gradient for discovered minima
+                // Create a neutral gradient for discovered minima
                 const gradient = ctx.createRadialGradient(x, minima.y, 0, x, minima.y, 40);
-                const hue = (index * 72) % 360;  // Different color for each minima
-                gradient.addColorStop(0, `hsla(${hue}, 70%, 50%, 0.4)`);
-                gradient.addColorStop(0.5, `hsla(${hue}, 70%, 50%, 0.2)`);
-                gradient.addColorStop(1, `hsla(${hue}, 70%, 50%, 0)`);
+                gradient.addColorStop(0, 'rgba(100, 149, 237, 0.4)');  // Neutral blue matching the stock line
+                gradient.addColorStop(0.5, 'rgba(100, 149, 237, 0.2)');
+                gradient.addColorStop(1, 'rgba(100, 149, 237, 0)');
                 
                 ctx.fillStyle = gradient;
                 ctx.fillRect(x - 40, 0, 80, vizContext.height);
                 
                 // Draw vertical indicator line
-                ctx.strokeStyle = `hsla(${hue}, 70%, 50%, 0.6)`;
+                ctx.strokeStyle = 'rgba(100, 149, 237, 0.6)';
                 ctx.lineWidth = 2;
                 ctx.beginPath();
                 ctx.moveTo(x, minima.y - 15);
@@ -389,15 +388,15 @@
                 // Outer glow
                 ctx.beginPath();
                 ctx.arc(x, minima.y, pulseSize + 5, 0, Math.PI * 2);
-                ctx.fillStyle = `hsla(${hue}, 70%, 50%, 0.2)`;
+                ctx.fillStyle = 'rgba(100, 149, 237, 0.2)';
                 ctx.fill();
                 
-                // Main circle with color
+                // Main circle with neutral color
                 ctx.beginPath();
                 ctx.arc(x, minima.y, 5, 0, Math.PI * 2);
                 const minimaGradient = ctx.createRadialGradient(x - 2, minima.y - 2, 0, x, minima.y, 5);
-                minimaGradient.addColorStop(0, `hsla(${hue}, 70%, 60%, 1)`);
-                minimaGradient.addColorStop(1, `hsla(${hue}, 70%, 40%, 1)`);
+                minimaGradient.addColorStop(0, 'rgba(120, 169, 255, 1)');
+                minimaGradient.addColorStop(1, 'rgba(80, 129, 217, 1)');
                 ctx.fillStyle = minimaGradient;
                 ctx.fill();
                 ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
@@ -654,6 +653,24 @@
             setTimeout(() => {
                 buttonContainer.style.opacity = '1';
             }, 50);
+            
+            // Show scroll down arrow
+            showScrollArrow();
+        }
+        
+        function showScrollArrow() {
+            const arrow = document.createElement('div');
+            arrow.className = 'scroll-arrow';
+            arrow.innerHTML = `
+                <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                    <circle cx="20" cy="20" r="19" stroke="rgba(255, 255, 255, 0.3)" stroke-width="2"/>
+                    <path d="M20 12L20 28M20 28L14 22M20 28L26 22" stroke="rgba(255, 255, 255, 0.8)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            `;
+            arrow.onclick = () => {
+                document.getElementById('completion-button-container').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            };
+            document.getElementById('optimization-container').appendChild(arrow);
         }
         
         function showExperiment(experiment) {
