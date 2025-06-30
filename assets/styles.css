@@ -2064,21 +2064,86 @@ tr:hover {
     font-family: var(--font-mono);
 }
 
-/* Algorithm Info */
-.algorithm-info {
+/* Experiments Discovered */
+.experiments-discovered {
+    margin-top: var(--space-2xl);
+    display: none;
+}
+
+.experiments-discovered h3 {
     text-align: center;
-    color: var(--text-muted);
+    color: var(--text-primary);
+    margin-bottom: var(--space-lg);
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.experiment-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.experiment-item {
+    display: flex;
+    align-items: center;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-md);
+    padding: var(--space-lg);
+    transition: all 0.3s ease;
+    opacity: 1;
+}
+
+.experiment-item:hover {
+    border-color: var(--accent-primary);
+    transform: translateX(4px);
+    box-shadow: var(--shadow-medium);
+}
+
+.experiment-rank {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--accent-primary);
+    margin-right: var(--space-lg);
+    min-width: 50px;
+}
+
+.experiment-details {
+    flex: 1;
+}
+
+.experiment-ticker {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: var(--space-xs);
+}
+
+.experiment-name {
     font-size: 0.875rem;
-}
-
-.algorithm-info p {
-    margin: var(--space-xs) 0;
-}
-
-.tech-stack {
+    color: var(--text-secondary);
     font-family: var(--font-mono);
-    font-size: 0.75rem;
-    opacity: 0.7;
+}
+
+.experiment-metrics {
+    display: flex;
+    gap: var(--space-lg);
+}
+
+.experiment-score,
+.experiment-winrate {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.experiment-score {
+    color: var(--accent-secondary);
+}
+
+.experiment-winrate {
+    color: var(--profit-primary);
 }
 
 /* Animations */
@@ -2120,5 +2185,36 @@ tr:hover {
     }
     50% {
         box-shadow: 0 0 0 10px rgba(0, 212, 163, 0);
+    }
+}
+
+/* Particle Effects */
+.particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: var(--accent-primary);
+    border-radius: 50%;
+    opacity: 0;
+    animation: floatUp 8s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes floatUp {
+    0% {
+        opacity: 0;
+        transform: translateY(100vh) scale(0);
+    }
+    10% {
+        opacity: 1;
+        transform: translateY(90vh) scale(1);
+    }
+    90% {
+        opacity: 1;
+        transform: translateY(10vh) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(0) scale(0);
     }
 }

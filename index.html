@@ -11,15 +11,17 @@
     <script>
     // Optimization simulation logic
     window.onload = function() {
+        const experiments = [{ticker: 'TSLA',name: 'bayes_iter_49',score: 54.55,winRate: 54.5,rank: 1},{ticker: 'TSLA',name: 'bayes_iter_50',score: 54.55,winRate: 54.5,rank: 2},{ticker: 'TSLA',name: 'bayes_iter_33',score: 45.83,winRate: 45.8,rank: 3},{ticker: 'TSLA',name: 'bayes_iter_40',score: 45.83,winRate: 45.8,rank: 4},{ticker: 'TSLA',name: 'bayes_iter_45',score: 45.83,winRate: 45.8,rank: 5}];
+        
         const steps = [
             { text: "Initializing Bayesian Optimizer...", progress: 10 },
-            { text: "Loading TSLA market data (2 years)...", progress: 20 },
+            { text: "Loading market data...", progress: 20 },
             { text: "Detecting flagpole patterns...", progress: 35 },
-            { text: "Optimizing parameters (Generation 1/10)...", progress: 45 },
-            { text: "Evaluating fitness scores...", progress: 55 },
-            { text: "Optimizing parameters (Generation 5/10)...", progress: 65 },
-            { text: "Convergence detected...", progress: 80 },
-            { text: "Validating on forward test data...", progress: 90 },
+            { text: "Running optimization generation 1...", progress: 45, showExperiment: 0 },
+            { text: "Evaluating fitness scores...", progress: 55, showExperiment: 1 },
+            { text: "Running optimization generation 5...", progress: 65, showExperiment: 2 },
+            { text: "Convergence detected...", progress: 80, showExperiment: 3 },
+            { text: "Validating on forward test data...", progress: 90, showExperiment: 4 },
             { text: "Optimization complete!", progress: 100 }
         ];
         
@@ -28,19 +30,36 @@
         const progressBar = document.getElementById('progress-fill');
         const metricsContainer = document.getElementById('metrics-container');
         const patternViz = document.getElementById('pattern-viz');
+        const experimentList = document.getElementById('experiment-list');
+        const experimentsDiscovered = document.getElementById('experiments-discovered');
         
-        // Generate random pattern visualization
+        // Generate random pattern visualization with animation delay
         function generatePatternBars() {
             const bars = [];
             for (let i = 0; i < 50; i++) {
                 const height = Math.random() * 80 + 20;
                 const isHighlight = Math.random() > 0.85;
-                bars.push(`<div class="pattern-bar ${isHighlight ? 'highlight' : ''}" style="height: ${height}%"></div>`);
+                const delay = i * 20; // Stagger animations
+                bars.push(`<div class="pattern-bar ${isHighlight ? 'highlight' : ''}" style="height: ${height}%; animation-delay: ${delay}ms"></div>`);
             }
             return bars.join('');
         }
         
         patternViz.innerHTML = generatePatternBars();
+        
+        // Add particle effects
+        function createParticles() {
+            const container = document.getElementById('intro-container');
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 5 + 's';
+                particle.style.animationDuration = (5 + Math.random() * 5) + 's';
+                container.appendChild(particle);
+            }
+        }
+        createParticles();
         
         // Animate optimization process
         function animateStep() {
@@ -52,6 +71,11 @@
                 // Update metrics randomly during optimization
                 if (currentStep > 2 && currentStep < steps.length - 1) {
                     updateMetrics();
+                }
+                
+                // Show experiment if this step reveals one
+                if (step.showExperiment !== undefined && experiments[step.showExperiment]) {
+                    showExperiment(experiments[step.showExperiment]);
                 }
                 
                 // Regenerate pattern visualization occasionally
@@ -85,10 +109,40 @@
         }
         
         function showFinalMetrics() {
-            document.getElementById('patterns-found').textContent = '147';
-            document.getElementById('optimization-score').textContent = '0.924';
-            document.getElementById('win-rate').textContent = '78.3%';
+            // Calculate totals from actual experiments
+            const totalPatterns = experiments.length * 30; // Approximate
+            const avgScore = experiments.reduce((sum, exp) => sum + exp.score, 0) / experiments.length;
+            const avgWinRate = experiments.reduce((sum, exp) => sum + exp.winRate, 0) / experiments.length;
+            
+            document.getElementById('patterns-found').textContent = totalPatterns;
+            document.getElementById('optimization-score').textContent = avgScore.toFixed(3);
+            document.getElementById('win-rate').textContent = avgWinRate.toFixed(1) + '%';
             metricsContainer.classList.add('highlight-final');
+        }
+        
+        function showExperiment(experiment) {
+            experimentsDiscovered.style.display = 'block';
+            
+            const expDiv = document.createElement('div');
+            expDiv.className = 'experiment-item';
+            expDiv.innerHTML = `
+                <div class="experiment-rank">#${experiment.rank}</div>
+                <div class="experiment-details">
+                    <div class="experiment-ticker">${experiment.ticker}</div>
+                    <div class="experiment-name">${experiment.name}</div>
+                </div>
+                <div class="experiment-metrics">
+                    <span class="experiment-score">Score: ${experiment.score.toFixed(2)}</span>
+                    <span class="experiment-winrate">Win: ${experiment.winRate.toFixed(1)}%</span>
+                </div>
+            `;
+            expDiv.style.opacity = '0';
+            experimentList.appendChild(expDiv);
+            
+            // Fade in the new experiment
+            setTimeout(() => {
+                expDiv.style.opacity = '1';
+            }, 50);
         }
         
         // Start animation
@@ -133,9 +187,9 @@
                 </div>
             </div>
             
-            <div class="algorithm-info">
-                <p>Using Gaussian Process with Expected Improvement acquisition function</p>
-                <p class="tech-stack">Powered by scikit-optimize • Python 3.13 • Async Architecture</p>
+            <div id="experiments-discovered" class="experiments-discovered">
+                <h3>Top Experiments Discovered</h3>
+                <div id="experiment-list" class="experiment-list"></div>
             </div>
         </div>
     </div>
